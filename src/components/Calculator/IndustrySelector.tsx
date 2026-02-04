@@ -25,8 +25,8 @@ export default function IndustrySelector({ selected, onChange }: IndustrySelecto
       >
         {INDUSTRY_MULTIPLIERS.map(({ industry, description, multiplier }) => (
           <option key={industry} value={industry}>
-            {industry} {industry !== 'Other' && `(${multiplier}x)`} - {description}
-          </option>
+          {industry} - {description}
+        </option>
         ))}
       </select>
       

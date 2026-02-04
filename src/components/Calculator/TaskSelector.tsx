@@ -4,6 +4,42 @@ import { useState } from 'react';
 import { TaskSelection } from '@/types/calculator.types';
 import { TASKS, TASK_CATEGORIES } from '@/lib/taskData';
 
+// Helper to get task unit name
+function getTaskUnit(taskId: string): string {
+  const units: Record<string, string> = {
+    'lead-prospecting': 'lead',
+    'appointment-setting': 'lead',
+    'rfp-tender-draft': 'document',
+    'social-content-gen': 'post',
+    'email-campaigns': 'email',
+    'seo-articles': 'article',
+    'level-1-support': 'ticket',
+    'client-onboarding': 'client',
+    'invoice-processing': 'invoice',
+    'nda-legal-review': 'document',
+    'resume-screening': 'CV'
+  };
+  return units[taskId] || 'item';
+}
+
+// Helper to get plural task unit name
+function getTaskUnitPlural(taskId: string): string {
+  const plurals: Record<string, string> = {
+    'lead-prospecting': 'leads',
+    'appointment-setting': 'appointments',
+    'rfp-tender-draft': 'RFPs/tenders',
+    'social-content-gen': 'social posts',
+    'email-campaigns': 'email campaigns',
+    'seo-articles': 'SEO articles',
+    'level-1-support': 'support tickets',
+    'client-onboarding': 'clients',
+    'invoice-processing': 'invoices',
+    'nda-legal-review': 'legal documents',
+    'resume-screening': 'CVs'
+  };
+  return plurals[taskId] || 'items';
+}
+
 interface TaskSelectorProps {
   selectedTasks: TaskSelection[];
   onChange: (selections: TaskSelection[]) => void;
@@ -84,27 +120,42 @@ export default function TaskSelector({ selectedTasks, onChange }: TaskSelectorPr
                         </label>
                         <p className="text-[#a0a0a0] text-sm font-inter-tight">
                           Avg: {task.humanTimeMinutes < 60 
-                            ? `${task.humanTimeMinutes} min` 
-                            : `${task.humanTimeMinutes / 60} hrs`
-                          } @ R{task.humanCostPerHour}/hr
+                            ? `${task.humanTimeMinutes} mins` 
+                            : `${task.humanTimeMinutes / 60} hours`
+                          } per {getTaskUnit(task.id)}. Avg employee costs R{task.humanCostPerHour}/hour
                         </p>
                         
                         {/* Volume Input - Only show when selected */}
                         {selected && (
                           <div className="mt-3 space-y-2">
                             <label className="text-[#f5f5f5] text-sm font-inter-tight block">
-                              How many per month?
+                              How many {getTaskUnitPlural(task.id)} per month?
                             </label>
                             <div className="flex items-center gap-3">
-                              <input
-                                type="number"
-                                value={volume}
-                                onChange={(e) => updateVolume(task.id, parseInt(e.target.value) || 1)}
-                                min="1"
-                                className="w-32 px-3 py-2 bg-[#010112] border border-[#5ccfa2] rounded 
-                                         text-[#f5f5f5] font-inter-tight
-                                         focus:outline-none focus:ring-2 focus:ring-[#5ccfa2]"
-                              />
+                            <input
+                              type="number"
+                              value={volume || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '') {
+                                  // Allow empty (user is typing)
+                                  updateVolume(task.id, 0);
+                                } else {
+                                  updateVolume(task.id, Math.max(1, parseInt(val) || 1));
+                                }
+                              }}
+                              onBlur={(e) => {
+                                // When they leave the field, ensure minimum of 1
+                                const val = parseInt(e.target.value);
+                                if (!val || val < 1) {
+                                  updateVolume(task.id, 1);
+                                }
+                              }}
+                              min="1"
+                              className="w-32 px-3 py-2 bg-[#010112] border border-[#5ccfa2] rounded 
+                                      text-[#f5f5f5] font-inter-tight
+                                      focus:outline-none focus:ring-2 focus:ring-[#5ccfa2]"
+                            />
                               <span className="text-[#a0a0a0] text-sm font-inter-tight">
                                 Typical: {task.typicalVolumeRange}
                               </span>
