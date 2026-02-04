@@ -13,6 +13,7 @@ import CTAButtons from '@/components/Results/CTAButtons';
 import OptimizationOpportunity from '@/components/Results/OptimizationOpportunity';
 import { TaskSelection, Industry } from '@/types/calculator.types';
 import { calculateManualCost, calculateTotalHours, calculateTotalResults } from '@/lib/calculatorLogic';
+import MobileCalculatorFooter from '@/components/Calculator/MobileCalculatorFooter';
 
 export default function Home() {
   const [selectedTasks, setSelectedTasks] = useState<TaskSelection[]>([]);
@@ -148,14 +149,9 @@ export default function Home() {
               onChange={setSelectedTasks}
             />
 
-            {/* Mobile Calculate Button - Add bottom padding for sticky counter */}
-              <div className="lg:hidden mt-8 pb-48">
-                <CalculateButton 
-                  onClick={handleCalculate}
-                  disabled={selectedTasks.length === 0}
-                />
-              </div>
-              </div>
+            {/* Add bottom padding for mobile sticky footer */}
+            <div className="lg:hidden h-64"></div>
+          </div>
 
           {/* Right Side - Live Counter (40%) */}
           <div className="lg:col-span-2">
@@ -175,7 +171,16 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        
+        {/* Mobile Sticky Footer - Counter + Button */}
+        <MobileCalculatorFooter
+          totalCost={totalManualCost}
+          totalHours={totalHours}
+          taskCount={selectedTasks.length}
+          onCalculate={handleCalculate}
+          disabled={selectedTasks.length === 0}
+        />
       </main>
     </div>
   );

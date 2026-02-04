@@ -27,40 +27,40 @@ export default function OptimizationOpportunity({
   const suggestions = generateSuggestions(selectedTasks, industry);
   
   return (
-    <div className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 border-2 border-orange-500 rounded-xl p-8 mb-8">
-      <div className="flex items-start gap-3 mb-6">
-        <span className="text-4xl">💡</span>
-        <div>
-          <h2 className="font-mono text-orange-400 text-2xl mb-2">
-            OPTIMIZATION OPPORTUNITY DETECTED
-          </h2>
-          <p className="text-[#f5f5f5] font-inter-tight">
-            We found ways to improve your ROI significantly
-          </p>
-        </div>
-      </div>
+    <div className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 border-2 border-orange-500 rounded-xl p-4 md:p-8 mb-8">
+      <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
+  <span className="text-2xl md:text-4xl">💡</span>
+  <div>
+    <h2 className="font-mono text-orange-400 text-lg md:text-2xl mb-1 md:mb-2">
+      OPTIMIZATION OPPORTUNITY DETECTED
+    </h2>
+    <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
+      We found ways to improve your ROI significantly
+    </p>
+  </div>
+</div>
       
       {/* Current Selection Summary */}
-      <div className="bg-[#010112]/50 border border-orange-800 rounded-lg p-6 mb-6">
+      <div className="bg-[#010112]/50 border border-orange-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
         <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider mb-4">
           Your Current Selection:
         </h3>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
-          <div>
+        <div>
             <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 1</p>
-            <p className="text-[#ff6b6b] font-mono font-bold text-xl">
-              {formatCurrency(results.totalSavingsYear1)}
+            <p className="text-[#ff6b6b] font-mono font-bold text-base md:text-xl">
+                {formatCurrency(results.totalSavingsYear1)}
             </p>
-            <p className="text-[#a0a0a0] text-xs font-inter-tight">(investment phase)</p>
-          </div>
+            <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(investment phase)</p>
+            </div>
           
           <div>
             <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 2</p>
             <p className="text-[#5ccfa2] font-mono font-bold text-xl">
               +{formatCurrency(results.totalSavingsYear2Plus)}
             </p>
-            <p className="text-[#a0a0a0] text-xs font-inter-tight">(profitable)</p>
+            <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(profitable)</p>
           </div>
           
           <div>
@@ -68,19 +68,19 @@ export default function OptimizationOpportunity({
             <p className="text-[#5ccfa2] font-mono font-bold text-xl">
               +{formatCurrency(results.totalSavingsYear2Plus)}
             </p>
-            <p className="text-[#a0a0a0] text-xs font-inter-tight">(profitable)</p>
+            <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(profitable)</p>
           </div>
           
           <div>
-            <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">3-Year Total</p>
+          <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">3-Year Total</p>
             <p className={`font-mono font-bold text-xl ${threeYearTotal > 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
               {threeYearTotal > 0 ? '+' : ''}{formatCurrency(threeYearTotal)}
             </p>
           </div>
         </div>
         
-        <p className="text-[#f5f5f5] font-inter-tight text-sm">
-          Selected: {results.taskResults.map(t => t.taskName).join(', ')}
+        <p className="text-[#f5f5f5] font-inter-tight text-xs md:text-sm">
+        Selected: {results.taskResults.map(t => t.taskName).join(', ')}
         </p>
       </div>
       
@@ -88,35 +88,35 @@ export default function OptimizationOpportunity({
       <div className="border-t border-orange-800 my-6"></div>
       
       {/* Optimization Options */}
-      <h3 className="font-mono text-orange-400 text-xl mb-4">
+      <h3 className="font-mono text-orange-400 text-base md:text-xl mb-3 md:mb-4">
         ⚡ INSTANT ROI ALTERNATIVES:
-      </h3>
+        </h3>
       
       <div className="space-y-4">
         {suggestions.map((suggestion, index) => (
           <div 
-            key={index}
-            className="bg-[#010112]/50 border border-gray-700 rounded-lg p-6 hover:border-[#5ccfa2] transition-colors"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-lg mb-2">
-                  {suggestion.title}
-                </h4>
-                <p className="text-[#a0a0a0] font-inter-tight text-sm mb-3">
-                  {suggestion.description}
-                </p>
+          key={index}
+          className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6 hover:border-[#5ccfa2] transition-colors"
+        >
+          <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
+                {suggestion.title}
+            </h4>
+            <p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
+                {suggestion.description}
+            </p>
                 
                 {/* Projected savings */}
-                <div className="flex items-center gap-6">
-                  <div>
-                    <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
-                    <p className="text-[#5ccfa2] font-mono font-bold text-2xl">
-                      +{formatCurrency(suggestion.projectedYear1Savings)}
-                    </p>
-                  </div>
-                  {suggestion.savingsIncrease && (
-                    <div className="text-[#5ccfa2] font-inter-tight text-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+  <div>
+    <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
+    <p className="text-[#5ccfa2] font-mono font-bold text-xl md:text-2xl">
+      +{formatCurrency(suggestion.projectedYear1Savings)}
+    </p>
+  </div>
+  {suggestion.savingsIncrease && (
+    <div className="text-[#5ccfa2] font-inter-tight text-xs md:text-sm">
                       ↑ {formatCurrency(suggestion.savingsIncrease)} improvement
                     </div>
                   )}
@@ -124,43 +124,43 @@ export default function OptimizationOpportunity({
               </div>
               
               <button
-                onClick={() => onRecalculate(suggestion.newSelections)}
-                className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
-                        hover:bg-[#6ee0b3] transition-colors"
+  onClick={() => onRecalculate(suggestion.newSelections)}
+  className="w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
+           hover:bg-[#6ee0b3] transition-colors"
 >
-                {suggestion.buttonText}
-              </button>
+  {suggestion.buttonText}
+</button>
             </div>
           </div>
         ))}
         
         {/* Custom Strategy Option */}
-        <div className="bg-[#010112]/50 border border-gray-700 rounded-lg p-6">
-          <div className="flex items-start justify-between">
+        <div className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6">
+  <div className="flex flex-col md:flex-row items-start justify-between gap-4">
             <div className="flex-1">
-              <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-lg mb-2">
-                Option {suggestions.length + 1}: Custom Package
-              </h4>
-              <p className="text-[#a0a0a0] font-inter-tight text-sm mb-3">
+            <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
+  Option {suggestions.length + 1}: Custom Package
+</h4>
+<p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
                 Let our team design a solution tailored to your specific volume, budget, and timeline. 
                 We'll find the optimal combination of automations for your business.
               </p>
             </div>
             
             <button
-              onClick={onCustomStrategy}
-              className="ml-4 px-6 py-3 bg-transparent border-2 border-[#5ccfa2] text-[#5ccfa2] rounded-lg font-mono font-semibold
-                       hover:bg-[#5ccfa2] hover:text-[#010112] transition-colors whitespace-nowrap"
-            >
-              Custom Strategy
-            </button>
+  onClick={onCustomStrategy}
+  className="w-full md:w-auto px-6 py-3 bg-transparent border-2 border-[#5ccfa2] text-[#5ccfa2] rounded-lg font-mono font-semibold text-sm md:text-base
+           hover:bg-[#5ccfa2] hover:text-[#010112] transition-colors"
+>
+  Custom Strategy
+</button>
           </div>
         </div>
       </div>
       
       {/* Bottom note */}
-      <div className="mt-6 pt-6 border-t border-orange-800">
-        <p className="text-[#a0a0a0] text-sm font-inter-tight">
+      <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-orange-800">
+  <p className="text-[#a0a0a0] text-xs md:text-sm font-inter-tight">
           💡 <strong className="text-[#f5f5f5]">Pro Tip:</strong> Combining multiple automations 
           provides better economies of scale and faster ROI due to shared setup costs.
         </p>

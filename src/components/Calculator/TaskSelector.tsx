@@ -133,29 +133,33 @@ export default function TaskSelector({ selectedTasks, onChange }: TaskSelectorPr
                             </label>
                             <div className="flex items-center gap-3">
                             <input
-                              type="number"
-                              value={volume || ''}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (val === '') {
-                                  // Allow empty (user is typing)
-                                  updateVolume(task.id, 0);
-                                } else {
-                                  updateVolume(task.id, Math.max(1, parseInt(val) || 1));
-                                }
-                              }}
-                              onBlur={(e) => {
-                                // When they leave the field, ensure minimum of 1
-                                const val = parseInt(e.target.value);
-                                if (!val || val < 1) {
-                                  updateVolume(task.id, 1);
-                                }
-                              }}
-                              min="1"
-                              className="w-32 px-3 py-2 bg-[#010112] border border-[#5ccfa2] rounded 
-                                      text-[#f5f5f5] font-inter-tight
-                                      focus:outline-none focus:ring-2 focus:ring-[#5ccfa2]"
-                            />
+  type="number"
+  value={volume === 0 ? '' : volume}
+  onChange={(e) => {
+    const val = e.target.value;
+    if (val === '' || val === '0') {
+      // Allow empty/zero while typing
+      updateVolume(task.id, 0);
+    } else {
+      const numVal = parseInt(val);
+      if (!isNaN(numVal)) {
+        updateVolume(task.id, numVal);
+      }
+    }
+  }}
+  onBlur={(e) => {
+    // When they click away, ensure minimum of 1
+    const val = parseInt(e.target.value);
+    if (!val || val < 1) {
+      updateVolume(task.id, task.suggestedVolume || 1);
+    }
+  }}
+  min="1"
+  placeholder={task.suggestedVolume.toString()}
+  className="w-32 px-3 py-2 bg-[#010112] border border-[#5ccfa2] rounded 
+           text-[#f5f5f5] font-inter-tight
+           focus:outline-none focus:ring-2 focus:ring-[#5ccfa2]"
+/>
                               <span className="text-[#a0a0a0] text-sm font-inter-tight">
                                 Typical: {task.typicalVolumeRange}
                               </span>
