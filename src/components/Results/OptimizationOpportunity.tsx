@@ -46,7 +46,7 @@ export default function OptimizationOpportunity({
           Your Current Selection:
         </h3>
         
-        <div className="grid md:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
           <div>
             <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 1</p>
             <p className="text-[#ff6b6b] font-mono font-bold text-xl">
@@ -125,9 +125,9 @@ export default function OptimizationOpportunity({
               
               <button
                 onClick={() => onRecalculate(suggestion.newSelections)}
-                className="ml-4 px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold
-                         hover:bg-[#6ee0b3] transition-colors whitespace-nowrap"
-              >
+                className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
+                        hover:bg-[#6ee0b3] transition-colors"
+>
                 {suggestion.buttonText}
               </button>
             </div>

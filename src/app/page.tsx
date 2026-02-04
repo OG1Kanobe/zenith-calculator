@@ -148,14 +148,14 @@ export default function Home() {
               onChange={setSelectedTasks}
             />
 
-            {/* Mobile Calculate Button */}
-            <div className="lg:hidden mt-8">
-              <CalculateButton 
-                onClick={handleCalculate}
-                disabled={selectedTasks.length === 0}
-              />
-            </div>
-          </div>
+            {/* Mobile Calculate Button - Add bottom padding for sticky counter */}
+              <div className="lg:hidden mt-8 pb-48">
+                <CalculateButton 
+                  onClick={handleCalculate}
+                  disabled={selectedTasks.length === 0}
+                />
+              </div>
+              </div>
 
           {/* Right Side - Live Counter (40%) */}
           <div className="lg:col-span-2">

@@ -14,7 +14,7 @@ export default function ResultsSummary({ results }: ResultsSummaryProps) {
         YOUR POTENTIAL SAVINGS
       </h1>
       
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Total Savings Card */}
         <div className="bg-gradient-to-br from-gray-900 to-[#010112] border-2 border-[#5ccfa2] rounded-xl p-6">
           <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider mb-3">

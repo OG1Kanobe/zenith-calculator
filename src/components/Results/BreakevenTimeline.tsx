@@ -46,22 +46,22 @@ export default function BreakevenTimeline({ results }: BreakevenTimelineProps) {
       <div className="space-y-2">
         {timeline.map((item) => (
           <div 
-            key={item.month}
-            className={`
-              flex items-center justify-between p-3 rounded-lg
+          key={item.month}
+          className={`
+            flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 rounded-lg gap-2
               ${item.cumulative >= 0 ? 'bg-[#5ccfa2]/10' : 'bg-gray-800/50'}
             `}
           >
-            <span className="font-mono text-[#f5f5f5]">
-              Month {item.month}
-            </span>
-            <span className={`
-              font-mono font-semibold
-              ${item.cumulative >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}
-            `}>
-              {item.cumulative >= 0 ? '+' : ''}{formatCurrency(item.cumulative)}
-              {item.isBreakeven && ' ← You\'re in profit!'}
-            </span>
+            <span className="font-mono text-[#f5f5f5] text-sm">
+                Month {item.month}
+                </span>
+                <span className={`
+                font-mono font-semibold text-sm
+                ${item.cumulative >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}
+                `}>
+                {item.cumulative >= 0 ? '+' : ''}{formatCurrency(item.cumulative)}
+                {item.isBreakeven && <span className="block sm:inline sm:ml-2 text-xs">← You're in profit!</span>}
+                </span>
           </div>
         ))}
       </div>

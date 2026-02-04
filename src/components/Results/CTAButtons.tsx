@@ -13,7 +13,7 @@ export default function CTAButtons({ onSendReport, onCustomAudit }: CTAButtonsPr
           Ready to transform your business with AI automation?
         </p>
         
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           {/* Send Report Button */}
           <button
             onClick={onSendReport}
