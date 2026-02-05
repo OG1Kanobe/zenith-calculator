@@ -15,6 +15,7 @@ export interface Task {
 export interface TaskSelection {
   taskId: string;
   volume: number;
+  customHourlyRate?: number; // ADD THIS - optional override
 }
 
 export type Industry = 
@@ -26,7 +27,6 @@ export type Industry =
   | 'Real Estate' 
   | 'Other';
 
-export type CalculationMethod = 'hourly' | 'salary'; // NEW
 
 export interface IndustryMultiplier {
   industry: Industry;

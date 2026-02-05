@@ -1,16 +1,15 @@
 'use client';
 
 import { formatCurrency, formatNumber } from '@/lib/calculatorLogic';
-import { TotalResults, TaskSelection, Industry, CalculationMethod } from '@/types/calculator.types';
+import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
 
 interface PDFResultsViewProps {
   results: TotalResults;
   selectedTasks: TaskSelection[];
   industry: Industry;
-  calculationMethod: CalculationMethod; // ADD THIS
 }
 
-export default function PDFResultsView({ results, selectedTasks, industry, calculationMethod }: PDFResultsViewProps) {
+export default function PDFResultsView({ results, selectedTasks, industry }: PDFResultsViewProps) {
   const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
   const currentDate = new Date().toLocaleDateString('en-ZA', { 
     year: 'numeric', 
@@ -44,7 +43,7 @@ export default function PDFResultsView({ results, selectedTasks, industry, calcu
           Zenith AI - ROI Calculator Results
         </h1>
         <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
-  Generated on {currentDate} | Industry: {industry} | Method: {calculationMethod === 'salary' ? 'Salary-Based' : 'Hourly Rate'}
+  Generated on {currentDate} | Industry: {industry}
 </p>
       </div>
 

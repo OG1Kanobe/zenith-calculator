@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { generateResultsPDFBase64 } from '@/lib/pdfGenerator';
-import { TotalResults, TaskSelection, Industry,  CalculationMethod } from '@/types/calculator.types';
+import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
 import SendReportModal from './SendReportModal';
 import { uploadPDFToCloudinary } from '@/lib/cloudinaryUpload';
 
@@ -11,7 +11,6 @@ interface CTAButtonsProps {
   results: TotalResults;
   selectedTasks: TaskSelection[];
   industry: Industry;
-  calculationMethod: CalculationMethod;
   webhookUrl: string;
   onCustomAudit: () => void;
 }
@@ -21,7 +20,6 @@ export default function CTAButtons({
   results,
   selectedTasks,
   industry,
-  calculationMethod,
   webhookUrl,
   onCustomAudit 
 }: CTAButtonsProps) {
@@ -35,7 +33,6 @@ export default function CTAButtons({
         name,
         email,
         industry,
-        calculationMethod,
         calculatorData: {
           totalSavingsYear1: results.totalSavingsYear1,
           totalSavingsYear2Plus: results.totalSavingsYear2Plus,
@@ -105,12 +102,12 @@ export default function CTAButtons({
             
             {/* Custom Audit Button */}
             <button
-              onClick={onCustomAudit}
+              onClick={() => window.open('https://cal.com/taahir/ai', '_blank', 'noopener,noreferrer')}
               className="px-6 py-4 bg-[#5ccfa2] text-[#010112] 
-                       rounded-lg font-mono font-semibold
-                       hover:bg-[#6ee0b3] 
-                       transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
-                       flex items-center justify-center gap-2"
+                      rounded-lg font-mono font-semibold
+                      hover:bg-[#6ee0b3] 
+                      transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
+                      flex items-center justify-center gap-2"
             >
               <span>📊</span>
               <span>Get Custom Audit</span>
@@ -121,8 +118,8 @@ export default function CTAButtons({
         {/* Disclaimer */}
         <div className="mt-6 space-y-2">
           <p className="text-[#a0a0a0] text-xs font-inter-tight text-center">
-            * Zenith pricing includes setup, monthly optimization, and estimated AI usage costs based on 
-            current API rates and your specified volume. Actual AI costs may vary slightly based on usage complexity. 
+            * Zenith Digital's pricing includes setup, monthly optimization, and estimated AI usage costs based on 
+            current API rates and your specified volume. Actual costs may vary slightly based on usage complexity. 
             No hidden fees.
           </p>
           <p className="text-[#a0a0a0] text-xs font-inter-tight text-center">

@@ -1,4 +1,4 @@
-import { TaskSelection, Industry, CalculationResult, TotalResults, CalculationMethod } from '@/types/calculator.types';
+import { TaskSelection, Industry, CalculationResult, TotalResults,} from '@/types/calculator.types';
 import { getTaskById } from './taskData';
 import { getIndustryMultiplier } from './industryData';
 
@@ -10,8 +10,7 @@ const ANNUAL_WORKING_HOURS = 2080; // 40 hours/week × 52 weeks
  */
 export function calculateManualCost(
   selections: TaskSelection[], 
-  industry: Industry,
-  calculationMethod: CalculationMethod = 'salary'
+  industry: Industry
 ): number {
   const industryMultiplier = getIndustryMultiplier(industry);
   
@@ -21,16 +20,9 @@ export function calculateManualCost(
     
     const humanTimeInHours = task.humanTimeMinutes / 60;
     
-    let effectiveHourlyRate: number;
-    
-    if (calculationMethod === 'salary') {
-      // Salary-based: Annual salary ÷ 2080 working hours, then apply industry multiplier
-      const baseHourlyFromSalary = task.annualSalary / ANNUAL_WORKING_HOURS;
-      effectiveHourlyRate = baseHourlyFromSalary * industryMultiplier;
-    } else {
-      // Hourly-based: Use hourly rate + overhead + industry multiplier
-      effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
-    }
+    // Use custom rate if provided, otherwise use default
+    const baseHourlyRate = selection.customHourlyRate ?? task.humanCostPerHour;
+    const effectiveHourlyRate = baseHourlyRate * OVERHEAD_MULTIPLIER * industryMultiplier;
     
     const monthlyManualCost = selection.volume * humanTimeInHours * effectiveHourlyRate;
     const annualManualCost = monthlyManualCost * 12;
@@ -59,8 +51,7 @@ export function calculateTotalHours(selections: TaskSelection[]): number {
  */
 export function calculateTaskResult(
   selection: TaskSelection, 
-  industry: Industry,
-  calculationMethod: CalculationMethod = 'salary'
+  industry: Industry
 ): CalculationResult | null {
   const task = getTaskById(selection.taskId);
   if (!task) return null;
@@ -70,14 +61,9 @@ export function calculateTaskResult(
   // Manual cost calculation
   const humanTimeInHours = task.humanTimeMinutes / 60;
   
-  let effectiveHourlyRate: number;
-  
-  if (calculationMethod === 'salary') {
-    const baseHourlyFromSalary = task.annualSalary / ANNUAL_WORKING_HOURS;
-    effectiveHourlyRate = baseHourlyFromSalary * industryMultiplier;
-  } else {
-    effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
-  }
+  // Use custom rate if provided, otherwise use default
+  const baseHourlyRate = selection.customHourlyRate ?? task.humanCostPerHour;
+  const effectiveHourlyRate = baseHourlyRate * OVERHEAD_MULTIPLIER * industryMultiplier;
   
   const monthlyManualCost = selection.volume * humanTimeInHours * effectiveHourlyRate;
   const annualManualCost = monthlyManualCost * 12;
@@ -128,14 +114,12 @@ export function calculateTaskResult(
  */
 export function calculateTotalResults(
   selections: TaskSelection[], 
-  industry: Industry,
-  calculationMethod: CalculationMethod = 'salary'
+  industry: Industry
 ): TotalResults | null {
-  if (selections.length === 0) return null;
   
   const taskResults = selections
-    .map(selection => calculateTaskResult(selection, industry, calculationMethod))
-    .filter((result): result is CalculationResult => result !== null);
+  .map(selection => calculateTaskResult(selection, industry)) // Removed calculationMethod
+  .filter((result): result is CalculationResult => result !== null);
   
   const totalAnnualManualCost = taskResults.reduce((sum, r) => sum + r.annualManualCost, 0);
   const totalZenithYear1Cost = taskResults.reduce((sum, r) => sum + r.zenithYear1Cost, 0);

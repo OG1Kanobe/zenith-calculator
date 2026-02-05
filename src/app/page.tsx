@@ -11,19 +11,17 @@ import BreakevenTimeline from '@/components/Results/BreakevenTimeline';
 import TaskBreakdown from '@/components/Results/TaskBreakdown';
 import CTAButtons from '@/components/Results/CTAButtons';
 import OptimizationOpportunity from '@/components/Results/OptimizationOpportunity';
-import { TaskSelection, Industry, CalculationMethod } from '@/types/calculator.types';
+import { TaskSelection, Industry } from '@/types/calculator.types';
 import { calculateManualCost, calculateTotalHours, calculateTotalResults } from '@/lib/calculatorLogic';
 import MobileCalculatorFooter from '@/components/Calculator/MobileCalculatorFooter';
 import PDFResultsView from '@/components/Results/PDFResultsView';
-import CalculationMethodSelector from '@/components/Calculator/CalculationMethodSelector';
 
 export default function Home() {
   const [selectedTasks, setSelectedTasks] = useState<TaskSelection[]>([]);
   const [industry, setIndustry] = useState<Industry>('Other');
-  const [calculationMethod, setCalculationMethod] = useState<CalculationMethod>('salary'); // NEW
   const [showResults, setShowResults] = useState(false);
 
-  const totalManualCost = calculateManualCost(selectedTasks, industry, calculationMethod);
+  const totalManualCost = calculateManualCost(selectedTasks, industry);
   const totalHours = calculateTotalHours(selectedTasks);
 
   const handleCalculate = () => {
@@ -45,7 +43,7 @@ export default function Home() {
   };
 
   if (showResults) {
-    const results = calculateTotalResults(selectedTasks, industry, calculationMethod);
+    const results = calculateTotalResults(selectedTasks, industry);
     
     if (!results) {
       return (
@@ -66,17 +64,37 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#010112] text-[#f5f5f5]">
         {/* Header */}
-        <header className="border-b border-gray-800 py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-            <h1 className="font-mono text-[#5ccfa2] text-2xl">Zenith AI</h1>
-            <button
-              onClick={() => setShowResults(false)}
-              className="px-4 py-2 text-[#5ccfa2] border border-[#5ccfa2] rounded-lg font-mono text-sm hover:bg-[#5ccfa2] hover:text-[#010112] transition-colors"
-            >
-              ← Back to Calculator
-            </button>
-          </div>
-        </header>
+<header className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <div className="flex items-center justify-between">
+    {/* Back Button - Left */}
+    {showResults && (
+      <button
+        onClick={() => setShowResults(false)}
+        className="flex items-center gap-2 text-[#5ccfa2] hover:text-[#6ee0b3] 
+                   font-inter-tight text-sm transition-colors"
+      >
+        <span>←</span>
+        <span>Back to Calculator</span>
+      </button>
+    )}
+    
+    {/* Spacer when no back button */}
+    {!showResults && <div></div>}
+    
+    {/* Logo - Right */}
+    <a 
+      href="https://zenithdigi.co.za" 
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+    >
+      <span className="font-mono text-[#5ccfa2] text-xl font-bold">
+        Zenith Digital
+      </span>
+      <span className="text-[#5ccfa2]">→</span>
+    </a>
+  </div>
+</header>
 
         {/* Results Content */}
 <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -101,7 +119,6 @@ export default function Home() {
   results={results}
   selectedTasks={selectedTasks}
   industry={industry}
-  calculationMethod={calculationMethod}
 />
       
       <CTAButtons
@@ -109,7 +126,6 @@ export default function Home() {
   results={results}
   selectedTasks={selectedTasks}
   industry={industry}
-  calculationMethod={calculationMethod}
   webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
   onCustomAudit={handleCustomAudit}
 />
@@ -129,7 +145,6 @@ export default function Home() {
   results={results}
   selectedTasks={selectedTasks}
   industry={industry}
-  calculationMethod={calculationMethod}
 />
       
       <CTAButtons
@@ -137,7 +152,6 @@ export default function Home() {
   results={results}
   selectedTasks={selectedTasks}
   industry={industry}
-  calculationMethod={calculationMethod}
   webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
   onCustomAudit={handleCustomAudit}
 />
@@ -173,19 +187,27 @@ export default function Home() {
               selected={industry}
               onChange={setIndustry}
             />
-
-            {/* NEW: Calculation Method Selector */}
-            <CalculationMethodSelector
-              selected={calculationMethod}
-              onChange={setCalculationMethod}
-            />
+            {/* NEW: Add calculation method note */}
+<div className="mb-8 p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+  <p className="font-inter-tight text-[#a0a0a0] text-xs">
+    💡 <strong className="text-[#f5f5f5]">Note:</strong> Calculations reflect opportunity cost using industry-standard hourly rates including overhead. For high-volume operations or bundled automations, ROI is typically positive within 12-18 months.
+  </p>
+</div>
 
             <p className="font-inter-tight text-[#f5f5f5] mb-8">
               Select the tasks you currently do manually:
             </p>
 
+            {/* NEW: Add helper text */}
+<div className="mb-4 p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+  <p className="font-inter-tight text-[#a0a0a0] text-xs">
+    💡 <strong className="text-[#f5f5f5]">Pro tip:</strong> Use custom hourly rates if you know your exact labor costs. 
+    Otherwise, our defaults reflect industry-standard rates including overhead.
+  </p>
+</div>
+
             <TaskSelector
-              selectedTasks={selectedTasks}
+              selections={selectedTasks}
               onChange={setSelectedTasks}
             />
 

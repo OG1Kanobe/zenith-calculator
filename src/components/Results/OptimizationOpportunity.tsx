@@ -1,9 +1,14 @@
 'use client';
-import { useState } from 'react'; // ADD THIS
-import { formatCurrency } from '@/lib/calculatorLogic';
-import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
 
-// Define task categories
+import { useState } from 'react';
+import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
+import OptimizationAlert from './OptimizationAlert';
+import OneOffPackageCard from './OneOffPackageCard';
+import FullServiceCollapsible from './FullServiceCollapsible';
+import { formatCurrency } from '@/lib/calculatorLogic';
+import { TASKS } from '@/lib/taskData';
+
+// Keep your existing task categories
 const GROWTH_TASKS = [
   'lead-prospecting',
   'appointment-setting', 
@@ -24,8 +29,6 @@ const NEUTRAL_TASKS = [
   'resume-screening'
 ];
 
-import { TASKS } from '@/lib/taskData';
-
 interface OptimizationOpportunityProps {
   results: TotalResults;
   selectedTasks: TaskSelection[];
@@ -41,178 +44,193 @@ export default function OptimizationOpportunity({
   onRecalculate,
   onCustomStrategy 
 }: OptimizationOpportunityProps) {
-
   const [showDetailedBreakdown, setShowDetailedBreakdown] = useState(false);
   
-// Calculate 3-year total
-const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
-
-// Generate smart suggestions
-const suggestions = generateSuggestions(selectedTasks, industry);
-
-// Calculate total time saved in hours per year
-const totalTimeSavedHours = results.taskResults.reduce((total, task) => {
-  return total + task.annualHoursSaved;
-}, 0);
+  // Calculate 3-year total
+  const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
+  
+  // Determine severity
+  const severity: 'moderate' | 'strong' = threeYearTotal < -15000 ? 'strong' : 'moderate';
+  
+  // Generate smart suggestions
+  const suggestions = generateSuggestions(selectedTasks, industry);
+  
+  // Calculate total time saved
+  const totalTimeSavedHours = results.taskResults.reduce((total, task) => {
+    return total + task.annualHoursSaved;
+  }, 0);
 
   return (
-    <div className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 border-2 border-orange-500 rounded-xl p-4 md:p-8 mb-8">
-      <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
-  <span className="text-2xl md:text-4xl">💡</span>
-  <div>
-    <h2 className="font-mono text-orange-400 text-lg md:text-2xl mb-1 md:mb-2">
-      OPTIMIZATION OPPORTUNITY DETECTED
-    </h2>
-    <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
-      We found ways to improve your ROI significantly
-    </p>
-  </div>
-</div>
-      
-      {/* Current Selection Summary - CONDITIONAL DISPLAY */}
-      <div className="bg-[#010112]/50 border border-orange-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider">
-            Your Current Selection:
-          </h3>
-          
-          {/* Toggle Button */}
-          <button
-            onClick={() => setShowDetailedBreakdown(!showDetailedBreakdown)}
-            className="text-xs font-inter-tight text-[#5ccfa2] hover:text-[#6ee0b3] 
-                       underline transition-colors"
-          >
-            {showDetailedBreakdown ? '← Simple view' : 'Show detailed breakdown →'}
-          </button>
+    <div className="space-y-8">
+      {/* New Alert Banner */}
+      <OptimizationAlert 
+        threeYearTotal={threeYearTotal}
+        severity={severity}
+      />
+
+      {/* New One-Off Package Card */}
+      <OneOffPackageCard 
+        onBookConsultation={onCustomStrategy}
+      />
+
+      {/* New Collapsible Full-Service */}
+      <FullServiceCollapsible 
+        results={results}
+        onBookConsultation={onCustomStrategy}
+      />
+
+      {/* Divider */}
+      <div className="border-t-2 border-gray-700"></div>
+
+      {/* Keep Your Existing Optimization Suggestions Section */}
+      <div className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-500 rounded-xl p-4 md:p-8">
+        <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
+          <span className="text-2xl md:text-4xl">⚡</span>
+          <div>
+            <h2 className="font-mono text-blue-400 text-lg md:text-2xl mb-1 md:mb-2">
+              INSTANT ROI ALTERNATIVES
+            </h2>
+            <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
+              Or optimize your current selection for better ROI
+            </p>
+          </div>
         </div>
+        
+        {/* Current Selection Summary */}
+        <div className="bg-[#010112]/50 border border-blue-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider">
+              Your Current Selection:
+            </h3>
+            
+            <button
+              onClick={() => setShowDetailedBreakdown(!showDetailedBreakdown)}
+              className="text-xs font-inter-tight text-[#5ccfa2] hover:text-[#6ee0b3] 
+                       underline transition-colors"
+            >
+              {showDetailedBreakdown ? '← Simple view' : 'Show detailed breakdown →'}
+            </button>
+          </div>
 
-        {!showDetailedBreakdown ? (
-          <>
-            {/* CONDITIONAL SMART DISPLAY */}
-            {/* Scenario B: Year 1 negative, Year 2+ positive */}
-            {results.totalSavingsYear1 < 0 && results.totalSavingsYear2Plus > 0 && (
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
-                  <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
-                    <span className="text-[#ff6b6b] font-mono font-bold">
-                      {formatCurrency(results.totalSavingsYear1)}
-                    </span>
-                    <span className="text-[#a0a0a0] text-sm ml-2">(investment phase)</span>
+          {!showDetailedBreakdown ? (
+            <>
+              {/* Scenario B: Year 1 negative, Year 2+ positive */}
+              {results.totalSavingsYear1 < 0 && results.totalSavingsYear2Plus > 0 && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                      <span className="text-[#ff6b6b] font-mono font-bold">
+                        {formatCurrency(results.totalSavingsYear1)}
+                      </span>
+                      <span className="text-[#a0a0a0] text-sm ml-2">(investment phase)</span>
+                    </div>
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Year 2+: </span>
+                      <span className="text-[#5ccfa2] font-mono font-bold">
+                        +{formatCurrency(results.totalSavingsYear2Plus)}/year
+                      </span>
+                      <span className="text-[#5ccfa2] text-sm ml-2">(profitable!)</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Year 2+: </span>
-                    <span className="text-[#5ccfa2] font-mono font-bold">
-                      +{formatCurrency(results.totalSavingsYear2Plus)}/year
-                    </span>
-                    <span className="text-[#5ccfa2] text-sm ml-2">(profitable!)</span>
+                  
+                  <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
+                    <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                      💡 Your setup investment pays off in Year 2, plus you reclaim{' '}
+                      <strong className="text-[#5ccfa2]">
+                        {totalTimeSavedHours.toFixed(0)} working hours/year
+                      </strong>{' '}
+                      from day one.
+                    </p>
                   </div>
                 </div>
-                
-                <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
-                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
-                    💡 Your setup investment pays off in Year 2, plus you reclaim{' '}
-                    <strong className="text-[#5ccfa2]">
-                    {totalTimeSavedHours.toFixed(0)} working hours/year
-                    </strong>{' '}
-                    from day one.
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Scenario C: Year 2+ still negative but 3-year cumulative positive */}
-            {results.totalSavingsYear1 < 0 && 
-             results.totalSavingsYear2Plus < 0 && 
-             threeYearTotal > 0 && (
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
-                  <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
-                    <span className="text-[#ff6b6b] font-mono font-bold">
-                      {formatCurrency(results.totalSavingsYear1)}
-                    </span>
+              {/* Scenario C: Year 2+ still negative but 3-year cumulative positive */}
+              {results.totalSavingsYear1 < 0 && 
+               results.totalSavingsYear2Plus < 0 && 
+               threeYearTotal > 0 && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                      <span className="text-[#ff6b6b] font-mono font-bold">
+                        {formatCurrency(results.totalSavingsYear1)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
+                      <span className="text-[#ff6b6b] font-mono font-bold">
+                        {formatCurrency(results.totalSavingsYear2Plus)}/year
+                      </span>
+                    </div>
                   </div>
+                  
                   <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
-                    <span className="text-[#ff6b6b] font-mono font-bold">
-                      {formatCurrency(results.totalSavingsYear2Plus)}/year
-                    </span>
+                    <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">3-Year Cumulative:</p>
+                    <p className="text-[#5ccfa2] font-mono font-bold text-xl">
+                      +{formatCurrency(threeYearTotal)}
+                    </p>
+                    <p className="text-[#a0a0a0] text-xs font-inter-tight">(break-even by year 3)</p>
+                  </div>
+                  
+                  <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
+                    <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                      💡 Long-term investment that reclaims{' '}
+                      <strong className="text-[#5ccfa2]">
+                        {totalTimeSavedHours.toFixed(0)} working hours/year
+                      </strong>{' '}
+                      throughout the period.
+                    </p>
                   </div>
                 </div>
-                
-                <div>
-                  <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">3-Year Cumulative:</p>
-                  <p className="text-[#5ccfa2] font-mono font-bold text-xl">
-                    +{formatCurrency(threeYearTotal)}
-                  </p>
-                  <p className="text-[#a0a0a0] text-xs font-inter-tight">(break-even by year 3)</p>
-                </div>
-                
-                <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
-                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
-                    💡 Long-term investment that reclaims{' '}
-                    <strong className="text-[#5ccfa2]">
-                    {totalTimeSavedHours.toFixed(0)} working hours/year
-                    </strong>{' '}
-                    throughout the period.
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Scenario A: All years negative (or Year 2+ negative and 3-year also negative) */}
-            {results.totalSavingsYear1 < 0 && 
-             results.totalSavingsYear2Plus < 0 && 
-             threeYearTotal <= 0 && (
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
-                  <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
-                    <span className="text-[#ff6b6b] font-mono font-bold">
-                      {formatCurrency(results.totalSavingsYear1)}
-                    </span>
+              {/* Scenario A: All years negative */}
+              {results.totalSavingsYear1 < 0 && 
+               results.totalSavingsYear2Plus < 0 && 
+               threeYearTotal <= 0 && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                      <span className="text-[#ff6b6b] font-mono font-bold">
+                        {formatCurrency(results.totalSavingsYear1)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
+                      <span className="text-[#ff6b6b] font-mono font-bold">
+                        {formatCurrency(results.totalSavingsYear2Plus)}/year
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
-                    <span className="text-[#ff6b6b] font-mono font-bold">
-                      {formatCurrency(results.totalSavingsYear2Plus)}/year
-                    </span>
+                  
+                  <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                    <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                      💡 While this requires ongoing investment, you reclaim{' '}
+                      <strong className="text-[#5ccfa2]">
+                        {totalTimeSavedHours.toFixed(0)} working hours/year
+                      </strong>. 
+                      This freed capacity can generate revenue that offsets the automation cost.
+                    </p>
                   </div>
                 </div>
-                
-                <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
-                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
-                    💡 While this requires ongoing investment, you reclaim{' '}
-                    <strong className="text-[#5ccfa2]">
-                    {totalTimeSavedHours.toFixed(0)} working hours/year
-                    </strong>. 
-                    This freed capacity can generate revenue that offsets the automation cost. 
-                    Best suited for businesses prioritizing time over immediate cost savings.
-                  </p>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            {/* DETAILED BREAKDOWN (Original Grid) */}
+              )}
+            </>
+          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
               <div>
                 <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 1</p>
                 <p className="text-[#ff6b6b] font-mono font-bold text-base md:text-xl">
                   {formatCurrency(results.totalSavingsYear1)}
                 </p>
-                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(investment phase)</p>
               </div>
               
               <div>
                 <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 2</p>
                 <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
                   {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
-                </p>
-                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
-                  ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
                 </p>
               </div>
 
@@ -221,113 +239,70 @@ const totalTimeSavedHours = results.taskResults.reduce((total, task) => {
                 <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
                   {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
                 </p>
-                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
-                  ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
-                </p>
               </div>
               
               <div>
-                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">3-Year Total</p>
+                <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">3-Year Total</p>
                 <p className={`font-mono font-bold text-xl ${threeYearTotal > 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
                   {threeYearTotal > 0 ? '+' : ''}{formatCurrency(threeYearTotal)}
                 </p>
               </div>
             </div>
-          </>
-        )}
-        
-        <p className="text-[#f5f5f5] font-inter-tight text-xs md:text-sm mt-4 pt-4 border-t border-gray-700">
-          Selected: {results.taskResults.map(t => t.taskName).join(', ')}
-        </p>
-      </div>
-      
-      {/* Divider */}
-      <div className="border-t border-orange-800 my-6"></div>
-      
-      {/* Optimization Options */}
-      <h3 className="font-mono text-orange-400 text-base md:text-xl mb-3 md:mb-4">
-        ⚡ INSTANT ROI ALTERNATIVES:
-        </h3>
-      
-      <div className="space-y-4">
-        {suggestions.map((suggestion, index) => (
-          <div 
-          key={index}
-          className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6 hover:border-[#5ccfa2] transition-colors"
-        >
-          <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
-                {suggestion.title}
-            </h4>
-            <p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
-                {suggestion.description}
-            </p>
-                
-                {/* Projected savings */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
-  <div>
-    <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
-    <p className="text-[#5ccfa2] font-mono font-bold text-xl md:text-2xl">
-      +{formatCurrency(suggestion.projectedYear1Savings)}
-    </p>
-  </div>
-  {suggestion.savingsIncrease && (
-    <div className="text-[#5ccfa2] font-inter-tight text-xs md:text-sm">
-                      ↑ {formatCurrency(suggestion.savingsIncrease)} improvement
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <button
-  onClick={() => onRecalculate(suggestion.newSelections)}
-  className="w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
-           hover:bg-[#6ee0b3] transition-colors"
->
-  {suggestion.buttonText}
-</button>
-            </div>
-          </div>
-        ))}
-        
-        {/* Custom Strategy Option */}
-        <div className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6">
-  <div className="flex flex-col md:flex-row items-start justify-between gap-4">
-            <div className="flex-1">
-            <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
-  Option {suggestions.length + 1}: Custom Package
-</h4>
-<p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
-                Let our team design a solution tailored to your specific volume, budget, and timeline. 
-                We'll find the optimal combination of automations for your business.
-              </p>
-            </div>
-            
-            <button
-  onClick={onCustomStrategy}
-  className="w-full md:w-auto px-6 py-3 bg-transparent border-2 border-[#5ccfa2] text-[#5ccfa2] rounded-lg font-mono font-semibold text-sm md:text-base
-           hover:bg-[#5ccfa2] hover:text-[#010112] transition-colors"
->
-  Custom Strategy
-</button>
-          </div>
+          )}
+          
+          <p className="text-[#f5f5f5] font-inter-tight text-xs md:text-sm mt-4 pt-4 border-t border-gray-700">
+            Selected: {results.taskResults.map(t => t.taskName).join(', ')}
+          </p>
         </div>
-      </div>
-      
-      {/* Bottom note */}
-      <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-orange-800">
-  <p className="text-[#a0a0a0] text-xs md:text-sm font-inter-tight">
-          💡 <strong className="text-[#f5f5f5]">Pro Tip:</strong> Combining multiple automations 
-          provides better economies of scale and faster ROI due to shared setup costs.
-        </p>
+        
+        {/* Optimization Options */}
+        <div className="space-y-4">
+          {suggestions.map((suggestion, index) => (
+            <div 
+              key={index}
+              className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6 hover:border-[#5ccfa2] transition-colors"
+            >
+              <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
+                <div className="flex-1">
+                  <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
+                    {suggestion.title}
+                  </h4>
+                  <p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
+                    {suggestion.description}
+                  </p>
+                      
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+                    <div>
+                      <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
+                      <p className="text-[#5ccfa2] font-mono font-bold text-xl md:text-2xl">
+                        +{formatCurrency(suggestion.projectedYear1Savings)}
+                      </p>
+                    </div>
+                    {suggestion.savingsIncrease && (
+                      <div className="text-[#5ccfa2] font-inter-tight text-xs md:text-sm">
+                        ↑ {formatCurrency(suggestion.savingsIncrease)} improvement
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => onRecalculate(suggestion.newSelections)}
+                  className="w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
+                           hover:bg-[#6ee0b3] transition-colors"
+                >
+                  {suggestion.buttonText}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-// Smart suggestion generator with REAL calculations
-// Helper to get volume context
+// Keep all your existing helper functions
 function getVolumeContext(taskId: string): string {
   const contexts: Record<string, string> = {
     'lead-prospecting': 'leads',
@@ -340,7 +315,6 @@ function getVolumeContext(taskId: string): string {
   return contexts[taskId] || 'volume';
 }
 
-// Smart suggestion generator with REAL calculations and task-aware logic
 function generateSuggestions(
   currentSelections: TaskSelection[], 
   industry: Industry
@@ -352,9 +326,9 @@ function generateSuggestions(
   buttonText: string;
   newSelections: TaskSelection[];
 }> {
+
   const suggestions = [];
   
-  // Helper to calculate savings for a set of selections
   const calculateSavings = (selections: TaskSelection[]) => {
     const manualCost = selections.reduce((total, sel) => {
       const task = TASKS.find(t => t.id === sel.taskId);
@@ -385,9 +359,7 @@ function generateSuggestions(
     return manualCost - aiCost;
   };
   
-  // Current Year 1 savings (negative)
   const currentYear1Savings = calculateSavings(currentSelections);
-  
   // Suggestion 1: Scale volume (ONLY for growth tasks)
   if (currentSelections.length === 1) {
     const taskId = currentSelections[0].taskId;

@@ -1,6 +1,3 @@
-backup after claude kicked the main chat due to compaction limits:
-
-
 'use client';
 import { useState } from 'react'; // ADD THIS
 import { formatCurrency } from '@/lib/calculatorLogic';
@@ -47,12 +44,17 @@ export default function OptimizationOpportunity({
 
   const [showDetailedBreakdown, setShowDetailedBreakdown] = useState(false);
   
-  // Calculate 3-year total
-  const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
-  
-  // Generate smart suggestions
-  const suggestions = generateSuggestions(selectedTasks, industry);
-  
+// Calculate 3-year total
+const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
+
+// Generate smart suggestions
+const suggestions = generateSuggestions(selectedTasks, industry);
+
+// Calculate total time saved in hours per year
+const totalTimeSavedHours = results.taskResults.reduce((total, task) => {
+  return total + task.annualHoursSaved;
+}, 0);
+
   return (
     <div className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 border-2 border-orange-500 rounded-xl p-4 md:p-8 mb-8">
       <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
@@ -67,51 +69,175 @@ export default function OptimizationOpportunity({
   </div>
 </div>
       
-      {/* Current Selection Summary */}
+      {/* Current Selection Summary - CONDITIONAL DISPLAY */}
       <div className="bg-[#010112]/50 border border-orange-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
-        <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider mb-4">
-          Your Current Selection:
-        </h3>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
-        <div>
-            <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 1</p>
-            <p className="text-[#ff6b6b] font-mono font-bold text-base md:text-xl">
-                {formatCurrency(results.totalSavingsYear1)}
-            </p>
-            <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(investment phase)</p>
-            </div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider">
+            Your Current Selection:
+          </h3>
           
-            <div>
-              <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 2</p>
-              <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
-                {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
-              </p>
-              <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
-                ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 3</p>
-              <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
-                {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
-              </p>
-              <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
-                ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
-              </p>
-            </div>
-          
-          <div>
-          <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">3-Year Total</p>
-            <p className={`font-mono font-bold text-xl ${threeYearTotal > 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
-              {threeYearTotal > 0 ? '+' : ''}{formatCurrency(threeYearTotal)}
-            </p>
-          </div>
+          {/* Toggle Button */}
+          <button
+            onClick={() => setShowDetailedBreakdown(!showDetailedBreakdown)}
+            className="text-xs font-inter-tight text-[#5ccfa2] hover:text-[#6ee0b3] 
+                       underline transition-colors"
+          >
+            {showDetailedBreakdown ? '← Simple view' : 'Show detailed breakdown →'}
+          </button>
         </div>
+
+        {!showDetailedBreakdown ? (
+          <>
+            {/* CONDITIONAL SMART DISPLAY */}
+            {/* Scenario B: Year 1 negative, Year 2+ positive */}
+            {results.totalSavingsYear1 < 0 && results.totalSavingsYear2Plus > 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                    <span className="text-[#ff6b6b] font-mono font-bold">
+                      {formatCurrency(results.totalSavingsYear1)}
+                    </span>
+                    <span className="text-[#a0a0a0] text-sm ml-2">(investment phase)</span>
+                  </div>
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Year 2+: </span>
+                    <span className="text-[#5ccfa2] font-mono font-bold">
+                      +{formatCurrency(results.totalSavingsYear2Plus)}/year
+                    </span>
+                    <span className="text-[#5ccfa2] text-sm ml-2">(profitable!)</span>
+                  </div>
+                </div>
+                
+                <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
+                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                    💡 Your setup investment pays off in Year 2, plus you reclaim{' '}
+                    <strong className="text-[#5ccfa2]">
+                    {totalTimeSavedHours.toFixed(0)} working hours/year
+                    </strong>{' '}
+                    from day one.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Scenario C: Year 2+ still negative but 3-year cumulative positive */}
+            {results.totalSavingsYear1 < 0 && 
+             results.totalSavingsYear2Plus < 0 && 
+             threeYearTotal > 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                    <span className="text-[#ff6b6b] font-mono font-bold">
+                      {formatCurrency(results.totalSavingsYear1)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
+                    <span className="text-[#ff6b6b] font-mono font-bold">
+                      {formatCurrency(results.totalSavingsYear2Plus)}/year
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">3-Year Cumulative:</p>
+                  <p className="text-[#5ccfa2] font-mono font-bold text-xl">
+                    +{formatCurrency(threeYearTotal)}
+                  </p>
+                  <p className="text-[#a0a0a0] text-xs font-inter-tight">(break-even by year 3)</p>
+                </div>
+                
+                <div className="bg-[#5ccfa2]/10 border border-[#5ccfa2]/30 rounded-lg p-4">
+                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                    💡 Long-term investment that reclaims{' '}
+                    <strong className="text-[#5ccfa2]">
+                    {totalTimeSavedHours.toFixed(0)} working hours/year
+                    </strong>{' '}
+                    throughout the period.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Scenario A: All years negative (or Year 2+ negative and 3-year also negative) */}
+            {results.totalSavingsYear1 < 0 && 
+             results.totalSavingsYear2Plus < 0 && 
+             threeYearTotal <= 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-4 text-base md:text-lg">
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Year 1: </span>
+                    <span className="text-[#ff6b6b] font-mono font-bold">
+                      {formatCurrency(results.totalSavingsYear1)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[#a0a0a0] font-inter-tight">Years 2-3: </span>
+                    <span className="text-[#ff6b6b] font-mono font-bold">
+                      {formatCurrency(results.totalSavingsYear2Plus)}/year
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                  <p className="text-[#f5f5f5] font-inter-tight text-sm leading-relaxed">
+                    💡 While this requires ongoing investment, you reclaim{' '}
+                    <strong className="text-[#5ccfa2]">
+                    {totalTimeSavedHours.toFixed(0)} working hours/year
+                    </strong>. 
+                    This freed capacity can generate revenue that offsets the automation cost. 
+                    Best suited for businesses prioritizing time over immediate cost savings.
+                  </p>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* DETAILED BREAKDOWN (Original Grid) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
+              <div>
+                <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 1</p>
+                <p className="text-[#ff6b6b] font-mono font-bold text-base md:text-xl">
+                  {formatCurrency(results.totalSavingsYear1)}
+                </p>
+                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">(investment phase)</p>
+              </div>
+              
+              <div>
+                <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 2</p>
+                <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
+                  {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
+                </p>
+                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
+                  ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[#a0a0a0] text-xs font-inter-tight mb-1">Year 3</p>
+                <p className={`font-mono font-bold text-base md:text-xl ${results.totalSavingsYear2Plus >= 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
+                  {results.totalSavingsYear2Plus >= 0 ? '+' : ''}{formatCurrency(results.totalSavingsYear2Plus)}
+                </p>
+                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">
+                  ({results.totalSavingsYear2Plus >= 0 ? 'profitable' : 'investment + time'})
+                </p>
+              </div>
+              
+              <div>
+                <p className="text-[#a0a0a0] text-[10px] md:text-xs font-inter-tight">3-Year Total</p>
+                <p className={`font-mono font-bold text-xl ${threeYearTotal > 0 ? 'text-[#5ccfa2]' : 'text-[#ff6b6b]'}`}>
+                  {threeYearTotal > 0 ? '+' : ''}{formatCurrency(threeYearTotal)}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
         
-        <p className="text-[#f5f5f5] font-inter-tight text-xs md:text-sm">
-        Selected: {results.taskResults.map(t => t.taskName).join(', ')}
+        <p className="text-[#f5f5f5] font-inter-tight text-xs md:text-sm mt-4 pt-4 border-t border-gray-700">
+          Selected: {results.taskResults.map(t => t.taskName).join(', ')}
         </p>
       </div>
       
