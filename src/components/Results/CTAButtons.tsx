@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { generateResultsPDFBase64 } from '@/lib/pdfGenerator';
-import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
+import { TotalResults, TaskSelection, Industry,  CalculationMethod } from '@/types/calculator.types';
 import SendReportModal from './SendReportModal';
 import { uploadPDFToCloudinary } from '@/lib/cloudinaryUpload';
 
@@ -11,6 +11,7 @@ interface CTAButtonsProps {
   results: TotalResults;
   selectedTasks: TaskSelection[];
   industry: Industry;
+  calculationMethod: CalculationMethod;
   webhookUrl: string;
   onCustomAudit: () => void;
 }
@@ -20,6 +21,7 @@ export default function CTAButtons({
   results,
   selectedTasks,
   industry,
+  calculationMethod,
   webhookUrl,
   onCustomAudit 
 }: CTAButtonsProps) {
@@ -33,6 +35,7 @@ export default function CTAButtons({
         name,
         email,
         industry,
+        calculationMethod,
         calculatorData: {
           totalSavingsYear1: results.totalSavingsYear1,
           totalSavingsYear2Plus: results.totalSavingsYear2Plus,
@@ -82,7 +85,8 @@ export default function CTAButtons({
       <div className="mt-8 mb-12">
         <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
           <p className="font-inter-tight text-[#f5f5f5] text-center mb-6">
-            Ready to transform your business with AI automation?
+          Get your personalized PDF report with detailed calculation breakdowns, 
+  step-by-step math, and optimization recommendations.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">

@@ -2,147 +2,150 @@ import { Task } from '@/types/calculator.types';
 
 export const TASKS: Task[] = [
   // SALES
-  {
-    id: 'lead-prospecting',
-    category: 'Sales',
-    name: 'Lead Prospecting',
-    humanTimeMinutes: 15,
-    humanCostPerHour: 350,
-    zenithSetupFee: 25000,
-    zenithMonthlyFee: 4500,
-    aiRunCost: 0.15,
-    suggestedVolume: 50,
-    typicalVolumeRange: '30-100'
-  },
-  {
-    id: 'appointment-setting',
-    category: 'Sales',
-    name: 'Appointment Setting',
-    humanTimeMinutes: 20,
-    humanCostPerHour: 250,
-    zenithSetupFee: 15000,
-    zenithMonthlyFee: 3500,
-    aiRunCost: 0.10,
-    suggestedVolume: 40,
-    typicalVolumeRange: '20-80'
-  },
-  {
-    id: 'rfp-tender-draft',
-    category: 'Sales',
-    name: 'RFP/Tender Draft',
-    humanTimeMinutes: 300, // 5 hours
-    humanCostPerHour: 650,
-    zenithSetupFee: 45000,
-    zenithMonthlyFee: 8000,
-    aiRunCost: 5.00,
-    suggestedVolume: 5,
-    typicalVolumeRange: '3-10'
-  },
-  
-  // MARKETING
-  {
-    id: 'social-content-gen',
-    category: 'Marketing',
-    name: 'Social Content Generation',
-    humanTimeMinutes: 180, // 3 hours
-    humanCostPerHour: 450,
-    zenithSetupFee: 35000,
-    zenithMonthlyFee: 7500,
-    aiRunCost: 6.50,
-    suggestedVolume: 20,
-    typicalVolumeRange: '15-40'
-  },
-  {
-    id: 'email-campaigns',
-    category: 'Marketing',
-    name: 'Email Campaigns',
-    humanTimeMinutes: 45,
-    humanCostPerHour: 400,
-    zenithSetupFee: 15000,
-    zenithMonthlyFee: 4000,
-    aiRunCost: 0.05,
-    suggestedVolume: 30,
-    typicalVolumeRange: '20-60'
-  },
-  {
-    id: 'seo-articles',
-    category: 'Marketing',
-    name: 'SEO Articles',
-    humanTimeMinutes: 240, // 4 hours
-    humanCostPerHour: 550,
-    zenithSetupFee: 20000,
-    zenithMonthlyFee: 4500,
-    aiRunCost: 1.50,
-    suggestedVolume: 10,
-    typicalVolumeRange: '5-20'
-  },
-  
-  // SUPPORT
-  {
-    id: 'level-1-support',
-    category: 'Support',
-    name: 'Level 1 Support',
-    humanTimeMinutes: 15,
-    humanCostPerHour: 180,
-    zenithSetupFee: 35000,
-    zenithMonthlyFee: 6500,
-    aiRunCost: 0.20,
-    suggestedVolume: 100,
-    typicalVolumeRange: '50-200'
-  },
-  {
-    id: 'client-onboarding',
-    category: 'Support',
-    name: 'Client Onboarding',
-    humanTimeMinutes: 120, // 2 hours
-    humanCostPerHour: 450,
-    zenithSetupFee: 25000,
-    zenithMonthlyFee: 5000,
-    aiRunCost: 1.00,
-    suggestedVolume: 15,
-    typicalVolumeRange: '10-30'
-  },
-  
-  // OPS
-  {
-    id: 'invoice-processing',
-    category: 'Ops',
-    name: 'Invoice Processing',
-    humanTimeMinutes: 10,
-    humanCostPerHour: 250,
-    zenithSetupFee: 25000,
-    zenithMonthlyFee: 5500,
-    aiRunCost: 0.50,
-    suggestedVolume: 80,
-    typicalVolumeRange: '40-150'
-  },
-  {
-    id: 'nda-legal-review',
-    category: 'Ops',
-    name: 'NDA/Legal Review',
-    humanTimeMinutes: 60, // 1 hour
-    humanCostPerHour: 1500,
-    zenithSetupFee: 55000,
-    zenithMonthlyFee: 12500,
-    aiRunCost: 4.50,
-    suggestedVolume: 8,
-    typicalVolumeRange: '5-15'
-  },
-  
-  // HR
-  {
-    id: 'resume-screening',
-    category: 'HR',
-    name: 'Resume Screening',
-    humanTimeMinutes: 20,
-    humanCostPerHour: 350,
-    zenithSetupFee: 20000,
-    zenithMonthlyFee: 4000,
-    aiRunCost: 0.25,
-    suggestedVolume: 60,
-    typicalVolumeRange: '30-120'
-  }
-];
+    {
+      id: 'lead-prospecting',
+      category: 'Sales',
+      name: 'Lead Prospecting',
+      humanTimeMinutes: 15,
+      humanCostPerHour: 350, // Keep for hourly mode
+      annualSalary: 300000, // NEW: Junior Sales Rep salary
+      zenithSetupFee: 25000,
+      zenithMonthlyFee: 1500,
+      aiRunCost: 2.5,
+      suggestedVolume: 80,
+      typicalVolumeRange: '50-200',
+    },
+    {
+      id: 'appointment-setting',
+      category: 'Sales',
+      name: 'Appointment Setting',
+      humanTimeMinutes: 20,
+      humanCostPerHour: 300,
+      annualSalary: 280000, // NEW: Sales Coordinator salary
+      zenithSetupFee: 20000,
+      zenithMonthlyFee: 1200,
+      aiRunCost: 1.8,
+      suggestedVolume: 40,
+      typicalVolumeRange: '20-100',
+    },
+    {
+      id: 'email-campaigns',
+      category: 'Marketing',
+      name: 'Email Campaigns',
+      humanTimeMinutes: 45,
+      humanCostPerHour: 400,
+      annualSalary: 350000, // NEW: Marketing Coordinator salary
+      zenithSetupFee: 15000,
+      zenithMonthlyFee: 800,
+      aiRunCost: 1.2,
+      suggestedVolume: 12,
+      typicalVolumeRange: '4-20',
+    },
+    {
+      id: 'social-content-gen',
+      category: 'Marketing',
+      name: 'Social Media Content',
+      humanTimeMinutes: 30,
+      humanCostPerHour: 350,
+      annualSalary: 320000, // NEW: Social Media Manager salary
+      zenithSetupFee: 18000,
+      zenithMonthlyFee: 900,
+      aiRunCost: 0.8,
+      suggestedVolume: 20,
+      typicalVolumeRange: '15-60',
+    },
+    {
+      id: 'seo-articles',
+      category: 'Marketing',
+      name: 'SEO Blog Articles',
+      humanTimeMinutes: 120,
+      humanCostPerHour: 400,
+      annualSalary: 380000, // NEW: Content Writer salary
+      zenithSetupFee: 20000,
+      zenithMonthlyFee: 1000,
+      aiRunCost: 3.5,
+      suggestedVolume: 8,
+      typicalVolumeRange: '4-15',
+    },
+    {
+      id: 'level-1-support',
+      category: 'Support',
+      name: 'Level 1 Support',
+      humanTimeMinutes: 30,
+      humanCostPerHour: 250,
+      annualSalary: 240000, // NEW: Support Agent salary
+      zenithSetupFee: 30000,
+      zenithMonthlyFee: 2000,
+      aiRunCost: 0.5,
+      suggestedVolume: 100,
+      typicalVolumeRange: '50-300',
+    },
+    {
+      id: 'invoice-processing',
+      category: 'Ops',
+      name: 'Invoice Processing',
+      humanTimeMinutes: 10,
+      humanCostPerHour: 280,
+      annualSalary: 260000, // NEW: Accounts Clerk salary
+      zenithSetupFee: 12000,
+      zenithMonthlyFee: 600,
+      aiRunCost: 0.3,
+      suggestedVolume: 100,
+      typicalVolumeRange: '50-500',
+    },
+    {
+      id: 'nda-legal-review',
+      category: 'Ops',
+      name: 'NDA/Legal Review',
+      humanTimeMinutes: 60,
+      humanCostPerHour: 800,
+      annualSalary: 650000, // NEW: Junior Legal Counsel salary
+      zenithSetupFee: 35000,
+      zenithMonthlyFee: 2500,
+      aiRunCost: 5.0,
+      suggestedVolume: 15,
+      typicalVolumeRange: '5-30',
+    },
+    {
+      id: 'resume-screening',
+      category: 'HR',
+      name: 'Resume Screening',
+      humanTimeMinutes: 15,
+      humanCostPerHour: 320,
+      annualSalary: 300000, // NEW: HR Coordinator salary
+      zenithSetupFee: 18000,
+      zenithMonthlyFee: 900,
+      aiRunCost: 0.4,
+      suggestedVolume: 50,
+      typicalVolumeRange: '20-150',
+    },
+    {
+      id: 'client-onboarding',
+      category: 'Ops',
+      name: 'Client Onboarding',
+      humanTimeMinutes: 90,
+      humanCostPerHour: 400,
+      annualSalary: 380000, // NEW: Client Success Manager salary
+      zenithSetupFee: 28000,
+      zenithMonthlyFee: 1800,
+      aiRunCost: 2.0,
+      suggestedVolume: 10,
+      typicalVolumeRange: '5-25',
+    },
+    {
+      id: 'rfp-tender-draft',
+      category: 'Sales',
+      name: 'RFP/Tender Drafting',
+      humanTimeMinutes: 180,
+      humanCostPerHour: 600,
+      annualSalary: 550000, // NEW: Proposals Manager salary
+      zenithSetupFee: 40000,
+      zenithMonthlyFee: 3000,
+      aiRunCost: 8.0,
+      suggestedVolume: 5,
+      typicalVolumeRange: '2-15',
+    },
+  ];
 
 export const getTaskById = (taskId: string): Task | undefined => {
   return TASKS.find(task => task.id === taskId);

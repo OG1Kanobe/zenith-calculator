@@ -81,7 +81,7 @@ export default function ResultsSummary({ results }: ResultsSummaryProps) {
           <p className="text-[#a0a0a0] text-sm font-inter-tight">
             per year
           </p>
-          
+
           {/* Toggle Button */}
           <button
             onClick={() => setShowTimeCalc(!showTimeCalc)}
@@ -130,6 +130,22 @@ export default function ResultsSummary({ results }: ResultsSummaryProps) {
             </p>
           </div>
         </div>
+
+        {/* Download PDF Teaser */}
+<div className="mt-6 p-4 bg-gradient-to-r from-gray-900/20 to-gray-800/10 border border-white-500/50 rounded-lg">
+  <div className="flex items-start gap-3">
+    <span className="text-2xl">📊</span>
+    <div className="flex-1">
+      <p className="font-inter-tight text-[#f5f5f5] text-sm font-semibold mb-2">
+        Want to see the detailed calculation breakdown?
+      </p>
+      <p className="font-inter-tight text-[#a0a0a0] text-xs leading-relaxed">
+        Download the full PDF report to see exactly how we calculated your savings, including 
+        step-by-step math, industry adjustments, overhead costs, and year-by-year projections.
+      </p>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   );

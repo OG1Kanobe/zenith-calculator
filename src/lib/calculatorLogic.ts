@@ -1,13 +1,18 @@
-import { TaskSelection, Industry, CalculationResult, TotalResults } from '@/types/calculator.types';
+import { TaskSelection, Industry, CalculationResult, TotalResults, CalculationMethod } from '@/types/calculator.types';
 import { getTaskById } from './taskData';
 import { getIndustryMultiplier } from './industryData';
 
 const OVERHEAD_MULTIPLIER = 1.2; // Management, office space, taxes, benefits
+const ANNUAL_WORKING_HOURS = 2080; // 40 hours/week × 52 weeks
 
 /**
  * Calculate annual manual cost for selected tasks
  */
-export function calculateManualCost(selections: TaskSelection[], industry: Industry): number {
+export function calculateManualCost(
+  selections: TaskSelection[], 
+  industry: Industry,
+  calculationMethod: CalculationMethod = 'salary'
+): number {
   const industryMultiplier = getIndustryMultiplier(industry);
   
   return selections.reduce((total, selection) => {
@@ -15,7 +20,18 @@ export function calculateManualCost(selections: TaskSelection[], industry: Indus
     if (!task) return total;
     
     const humanTimeInHours = task.humanTimeMinutes / 60;
-    const effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
+    
+    let effectiveHourlyRate: number;
+    
+    if (calculationMethod === 'salary') {
+      // Salary-based: Annual salary ÷ 2080 working hours, then apply industry multiplier
+      const baseHourlyFromSalary = task.annualSalary / ANNUAL_WORKING_HOURS;
+      effectiveHourlyRate = baseHourlyFromSalary * industryMultiplier;
+    } else {
+      // Hourly-based: Use hourly rate + overhead + industry multiplier
+      effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
+    }
+    
     const monthlyManualCost = selection.volume * humanTimeInHours * effectiveHourlyRate;
     const annualManualCost = monthlyManualCost * 12;
     
@@ -43,7 +59,8 @@ export function calculateTotalHours(selections: TaskSelection[]): number {
  */
 export function calculateTaskResult(
   selection: TaskSelection, 
-  industry: Industry
+  industry: Industry,
+  calculationMethod: CalculationMethod = 'salary'
 ): CalculationResult | null {
   const task = getTaskById(selection.taskId);
   if (!task) return null;
@@ -52,7 +69,16 @@ export function calculateTaskResult(
   
   // Manual cost calculation
   const humanTimeInHours = task.humanTimeMinutes / 60;
-  const effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
+  
+  let effectiveHourlyRate: number;
+  
+  if (calculationMethod === 'salary') {
+    const baseHourlyFromSalary = task.annualSalary / ANNUAL_WORKING_HOURS;
+    effectiveHourlyRate = baseHourlyFromSalary * industryMultiplier;
+  } else {
+    effectiveHourlyRate = task.humanCostPerHour * OVERHEAD_MULTIPLIER * industryMultiplier;
+  }
+  
   const monthlyManualCost = selection.volume * humanTimeInHours * effectiveHourlyRate;
   const annualManualCost = monthlyManualCost * 12;
   
@@ -75,7 +101,7 @@ export function calculateTaskResult(
   
   // Breakeven month calculation
   const monthlySavings = (annualManualCost / 12) - task.zenithMonthlyFee - (selection.volume * task.aiRunCost);
-  const breakevenMonth = Math.ceil(task.zenithSetupFee / monthlySavings);
+  const breakevenMonth = monthlySavings > 0 ? Math.ceil(task.zenithSetupFee / monthlySavings) : Infinity;
   
   // Generate AI cost disclaimer
   const aiCostDisclaimer = generateAICostDisclaimer(task, selection.volume);
@@ -102,12 +128,13 @@ export function calculateTaskResult(
  */
 export function calculateTotalResults(
   selections: TaskSelection[], 
-  industry: Industry
+  industry: Industry,
+  calculationMethod: CalculationMethod = 'salary'
 ): TotalResults | null {
   if (selections.length === 0) return null;
   
   const taskResults = selections
-    .map(selection => calculateTaskResult(selection, industry))
+    .map(selection => calculateTaskResult(selection, industry, calculationMethod))
     .filter((result): result is CalculationResult => result !== null);
   
   const totalAnnualManualCost = taskResults.reduce((sum, r) => sum + r.annualManualCost, 0);

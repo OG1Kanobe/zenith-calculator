@@ -4,6 +4,7 @@ export interface Task {
   name: string;
   humanTimeMinutes: number;
   humanCostPerHour: number;
+  annualSalary: number;
   zenithSetupFee: number;
   zenithMonthlyFee: number;
   aiRunCost: number;
@@ -24,6 +25,8 @@ export type Industry =
   | 'Technology' 
   | 'Real Estate' 
   | 'Other';
+
+export type CalculationMethod = 'hourly' | 'salary'; // NEW
 
 export interface IndustryMultiplier {
   industry: Industry;

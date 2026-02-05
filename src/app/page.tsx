@@ -11,17 +11,19 @@ import BreakevenTimeline from '@/components/Results/BreakevenTimeline';
 import TaskBreakdown from '@/components/Results/TaskBreakdown';
 import CTAButtons from '@/components/Results/CTAButtons';
 import OptimizationOpportunity from '@/components/Results/OptimizationOpportunity';
-import { TaskSelection, Industry } from '@/types/calculator.types';
+import { TaskSelection, Industry, CalculationMethod } from '@/types/calculator.types';
 import { calculateManualCost, calculateTotalHours, calculateTotalResults } from '@/lib/calculatorLogic';
 import MobileCalculatorFooter from '@/components/Calculator/MobileCalculatorFooter';
 import PDFResultsView from '@/components/Results/PDFResultsView';
+import CalculationMethodSelector from '@/components/Calculator/CalculationMethodSelector';
 
 export default function Home() {
   const [selectedTasks, setSelectedTasks] = useState<TaskSelection[]>([]);
   const [industry, setIndustry] = useState<Industry>('Other');
+  const [calculationMethod, setCalculationMethod] = useState<CalculationMethod>('salary'); // NEW
   const [showResults, setShowResults] = useState(false);
 
-  const totalManualCost = calculateManualCost(selectedTasks, industry);
+  const totalManualCost = calculateManualCost(selectedTasks, industry, calculationMethod);
   const totalHours = calculateTotalHours(selectedTasks);
 
   const handleCalculate = () => {
@@ -43,7 +45,7 @@ export default function Home() {
   };
 
   if (showResults) {
-    const results = calculateTotalResults(selectedTasks, industry);
+    const results = calculateTotalResults(selectedTasks, industry, calculationMethod);
     
     if (!results) {
       return (
@@ -96,19 +98,21 @@ export default function Home() {
       
       {/* Hidden PDF View */}
       <PDFResultsView 
-        results={results}
-        selectedTasks={selectedTasks}
-        industry={industry}
-      />
+  results={results}
+  selectedTasks={selectedTasks}
+  industry={industry}
+  calculationMethod={calculationMethod}
+/>
       
       <CTAButtons
-        targetElementId="pdf-results-content"
-        results={results}
-        selectedTasks={selectedTasks}
-        industry={industry}
-        webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
-        onCustomAudit={handleCustomAudit}
-      />
+  targetElementId="pdf-results-content"
+  results={results}
+  selectedTasks={selectedTasks}
+  industry={industry}
+  calculationMethod={calculationMethod}
+  webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+  onCustomAudit={handleCustomAudit}
+/>
     </>
   ) : (
     /* Positive ROI: Show normal results */
@@ -122,19 +126,21 @@ export default function Home() {
       
       {/* Hidden PDF View */}
       <PDFResultsView 
-        results={results}
-        selectedTasks={selectedTasks}
-        industry={industry}
-      />
+  results={results}
+  selectedTasks={selectedTasks}
+  industry={industry}
+  calculationMethod={calculationMethod}
+/>
       
       <CTAButtons
-        targetElementId="pdf-results-content"
-        results={results}
-        selectedTasks={selectedTasks}
-        industry={industry}
-        webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
-        onCustomAudit={handleCustomAudit}
-      />
+  targetElementId="pdf-results-content"
+  results={results}
+  selectedTasks={selectedTasks}
+  industry={industry}
+  calculationMethod={calculationMethod}
+  webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+  onCustomAudit={handleCustomAudit}
+/>
     </>
   )}
 </main>
@@ -167,8 +173,14 @@ export default function Home() {
               selected={industry}
               onChange={setIndustry}
             />
-            
-            <p className="font-inter-tight text-[#f5f5f5] mb-8 mt-8">
+
+            {/* NEW: Calculation Method Selector */}
+            <CalculationMethodSelector
+              selected={calculationMethod}
+              onChange={setCalculationMethod}
+            />
+
+            <p className="font-inter-tight text-[#f5f5f5] mb-8">
               Select the tasks you currently do manually:
             </p>
 
