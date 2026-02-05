@@ -13,12 +13,14 @@ export async function generateResultsPDFBase64(elementId: string): Promise<strin
 
     console.log('Generating PDF...');
 
-    // Capture the element as canvas with high quality
+    // Capture the element as canvas with LOWER quality to reduce file size
     const canvas = await html2canvas(element, {
-      scale: 2, // Higher quality
+      scale: 1.5, // REDUCED from 2 to 1.5 (lower quality = smaller file)
       useCORS: true,
       logging: false,
-      backgroundColor: '#010112', // Match your dark background
+      backgroundColor: '#ffffff',
+      imageTimeout: 0,
+      removeContainer: true,
     });
 
     // Calculate dimensions
@@ -31,25 +33,27 @@ export async function generateResultsPDFBase64(elementId: string): Promise<strin
     const pdf = new jsPDF('p', 'mm', 'a4');
     let position = 0;
 
-    // Convert canvas to image
-    const imgData = canvas.toDataURL('image/png');
+    // Convert canvas to image with JPEG compression (smaller than PNG)
+    const imgData = canvas.toDataURL('image/jpeg', 0.75); // JPEG at 75% quality
 
     // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
     heightLeft -= pageHeight;
 
     // Add additional pages if content is longer than one page
     while (heightLeft > 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
       heightLeft -= pageHeight;
     }
 
     // Return base64 string (without data:application/pdf;base64, prefix)
     const pdfBase64 = pdf.output('dataurlstring').split(',')[1];
     
-    console.log('PDF generated successfully!');
+    const sizeInMB = (pdfBase64.length * 0.75) / (1024 * 1024); // Approximate size
+    console.log(`PDF generated successfully! Size: ~${sizeInMB.toFixed(2)} MB`);
+    
     return pdfBase64;
   } catch (error) {
     console.error('Error generating PDF:', error);

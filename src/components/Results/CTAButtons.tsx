@@ -28,24 +28,7 @@ export default function CTAButtons({
 
   const handleSubmit = async (name: string, email: string) => {
     try {
-      // 1. Generate PDF as base64
-      const pdfBase64 = await generateResultsPDFBase64(targetElementId);
-      
-      if (!pdfBase64) {
-        throw new Error('Failed to generate PDF');
-      }
-  
-      // 2. Upload PDF to Cloudinary
-      const fileName = `zenith-report-${Date.now()}.pdf`;
-      const pdfUrl = await uploadPDFToCloudinary(pdfBase64, fileName);
-      
-      if (!pdfUrl) {
-        throw new Error('Failed to upload PDF to Cloudinary');
-      }
-  
-      console.log('PDF uploaded successfully:', pdfUrl);
-  
-      // 3. Prepare payload for n8n (with URL instead of base64)
+      // Just send data - no PDF generation!
       const payload = {
         name,
         email,
@@ -57,13 +40,20 @@ export default function CTAButtons({
           totalWorkingDays: results.totalWorkingDays,
           overallROI: results.overallROI,
           costReductionPercentage: results.costReductionPercentage,
-          tasks: selectedTasks,
+          threeYearTotal: results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2),
+          tasks: results.taskResults.map(task => ({
+            taskName: task.taskName,
+            volume: task.volume,
+            savingsYear1: task.savingsYear1,
+            annualHoursSaved: task.annualHoursSaved,
+            annualManualCost: task.annualManualCost,
+            zenithYear1Cost: task.zenithYear1Cost,
+          })),
         },
-        pdfUrl, // Send URL instead of base64!
         timestamp: new Date().toISOString(),
       };
   
-      // 4. Send to n8n webhook
+      // Send to n8n
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -76,16 +66,14 @@ export default function CTAButtons({
         throw new Error('Webhook request failed');
       }
   
-      // 5. Show success message
+      // Show success
       setIsModalOpen(false);
       setShowSuccess(true);
-      
-      // Hide success message after 5 seconds
       setTimeout(() => setShowSuccess(false), 5000);
   
     } catch (error) {
       console.error('Error sending report:', error);
-      throw error; // Re-throw to let modal handle it
+      throw error;
     }
   };
 
@@ -162,8 +150,8 @@ export default function CTAButtons({
               />
             </svg>
             <div>
-              <p className="font-mono font-bold">Report Sent!</p>
-              <p className="font-inter-tight text-sm">Check your email inbox.</p>
+              <p className="font-mono font-bold">Your Report is On the Way!</p>
+              <p className="font-inter-tight text-sm">Check your email inbox in a few.</p>
             </div>
           </div>
         </div>

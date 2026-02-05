@@ -14,6 +14,7 @@ import OptimizationOpportunity from '@/components/Results/OptimizationOpportunit
 import { TaskSelection, Industry } from '@/types/calculator.types';
 import { calculateManualCost, calculateTotalHours, calculateTotalResults } from '@/lib/calculatorLogic';
 import MobileCalculatorFooter from '@/components/Calculator/MobileCalculatorFooter';
+import PDFResultsView from '@/components/Results/PDFResultsView';
 
 export default function Home() {
   const [selectedTasks, setSelectedTasks] = useState<TaskSelection[]>([]);
@@ -76,53 +77,67 @@ export default function Home() {
         </header>
 
         {/* Results Content */}
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {results.totalSavingsYear1 < 0 ? (
-  /* Negative ROI: Show ONLY optimization path */
-  <>
-    <div id="results-content">
-      <OptimizationOpportunity
+<main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  {results.totalSavingsYear1 < 0 ? (
+    /* Negative ROI: Show ONLY optimization path */
+    <>
+      <div id="results-content">
+        <OptimizationOpportunity
+          results={results}
+          selectedTasks={selectedTasks}
+          industry={industry}
+          onRecalculate={(newSelections) => {
+            setSelectedTasks(newSelections);
+            setShowResults(false);
+          }}
+          onCustomStrategy={handleCustomAudit}
+        />
+      </div>
+      
+      {/* Hidden PDF View */}
+      <PDFResultsView 
         results={results}
         selectedTasks={selectedTasks}
         industry={industry}
-        onRecalculate={(newSelections) => {
-          setSelectedTasks(newSelections);
-          setShowResults(false);
-        }}
-        onCustomStrategy={handleCustomAudit}
       />
-    </div>
-    
-    <CTAButtons
-      targetElementId="results-content"
-      results={results}
-      selectedTasks={selectedTasks}
-      industry={industry}
-      webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
-      onCustomAudit={handleCustomAudit}
-    />
-  </>
-          ) : (
-            /* Positive ROI: Show normal results */
-            <>
-              <div id="results-content">
-                <ResultsSummary results={results} />
-                <ComparisonChart results={results} />
-                <BreakevenTimeline results={results} />
-                <TaskBreakdown taskResults={results.taskResults} />
-              </div>
-              
-              <CTAButtons
-                targetElementId="results-content"
-                results={results}
-                selectedTasks={selectedTasks}
-                industry={industry}
-                webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
-                onCustomAudit={handleCustomAudit}
-              />
-            </>
-          )}
-        </main>
+      
+      <CTAButtons
+        targetElementId="pdf-results-content"
+        results={results}
+        selectedTasks={selectedTasks}
+        industry={industry}
+        webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+        onCustomAudit={handleCustomAudit}
+      />
+    </>
+  ) : (
+    /* Positive ROI: Show normal results */
+    <>
+      <div id="results-content">
+        <ResultsSummary results={results} />
+        <ComparisonChart results={results} />
+        <BreakevenTimeline results={results} />
+        <TaskBreakdown taskResults={results.taskResults} />
+      </div>
+      
+      {/* Hidden PDF View */}
+      <PDFResultsView 
+        results={results}
+        selectedTasks={selectedTasks}
+        industry={industry}
+      />
+      
+      <CTAButtons
+        targetElementId="pdf-results-content"
+        results={results}
+        selectedTasks={selectedTasks}
+        industry={industry}
+        webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+        onCustomAudit={handleCustomAudit}
+      />
+    </>
+  )}
+</main>
       </div>
     );
   }
