@@ -77,34 +77,47 @@ export default function Home() {
 
         {/* Results Content */}
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {results.totalSavingsYear1 < 0 ? (
-            /* Negative ROI: Show ONLY optimization path */
-            <>
-              <OptimizationOpportunity
-                results={results}
-                selectedTasks={selectedTasks}
-                industry={industry}
-                onRecalculate={(newSelections) => {
-                  setSelectedTasks(newSelections);
-                  setShowResults(false);
-                }}
-                onCustomStrategy={handleCustomAudit}
-              />
-              
-              <CTAButtons 
-                onSendReport={handleSendReport}
-                onCustomAudit={handleCustomAudit}
-              />
-            </>
+        {results.totalSavingsYear1 < 0 ? (
+  /* Negative ROI: Show ONLY optimization path */
+  <>
+    <div id="results-content">
+      <OptimizationOpportunity
+        results={results}
+        selectedTasks={selectedTasks}
+        industry={industry}
+        onRecalculate={(newSelections) => {
+          setSelectedTasks(newSelections);
+          setShowResults(false);
+        }}
+        onCustomStrategy={handleCustomAudit}
+      />
+    </div>
+    
+    <CTAButtons
+      targetElementId="results-content"
+      results={results}
+      selectedTasks={selectedTasks}
+      industry={industry}
+      webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+      onCustomAudit={handleCustomAudit}
+    />
+  </>
           ) : (
             /* Positive ROI: Show normal results */
             <>
-              <ResultsSummary results={results} />
-              <ComparisonChart results={results} />
-              <BreakevenTimeline results={results} />
-              <TaskBreakdown taskResults={results.taskResults} />
-              <CTAButtons 
-                onSendReport={handleSendReport}
+              <div id="results-content">
+                <ResultsSummary results={results} />
+                <ComparisonChart results={results} />
+                <BreakevenTimeline results={results} />
+                <TaskBreakdown taskResults={results.taskResults} />
+              </div>
+              
+              <CTAButtons
+                targetElementId="results-content"
+                results={results}
+                selectedTasks={selectedTasks}
+                industry={industry}
+                webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
                 onCustomAudit={handleCustomAudit}
               />
             </>
