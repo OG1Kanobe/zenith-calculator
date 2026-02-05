@@ -91,7 +91,6 @@ export default function Home() {
       <span className="font-mono text-[#5ccfa2] text-xl font-bold">
         Zenith Digital
       </span>
-      <span className="text-[#5ccfa2]">→</span>
     </a>
   </div>
 </header>
@@ -167,7 +166,7 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-gray-800 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-mono text-[#5ccfa2] text-2xl">Zenith AI</h1>
+          <h1 className="font-mono text-[#5ccfa2] text-2xl font-bold">Zenith Digital</h1>
         </div>
       </header>
 
