@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { generateResultsPDFBase64 } from '@/lib/pdfGenerator';
 import { TotalResults, TaskSelection, Industry } from '@/types/calculator.types';
 import SendReportModal from './SendReportModal';
+import { uploadPDFToCloudinary } from '@/lib/cloudinaryUpload';
 
 interface CTAButtonsProps {
   targetElementId: string;
@@ -33,8 +34,18 @@ export default function CTAButtons({
       if (!pdfBase64) {
         throw new Error('Failed to generate PDF');
       }
-
-      // 2. Prepare payload for n8n
+  
+      // 2. Upload PDF to Cloudinary
+      const fileName = `zenith-report-${Date.now()}.pdf`;
+      const pdfUrl = await uploadPDFToCloudinary(pdfBase64, fileName);
+      
+      if (!pdfUrl) {
+        throw new Error('Failed to upload PDF to Cloudinary');
+      }
+  
+      console.log('PDF uploaded successfully:', pdfUrl);
+  
+      // 3. Prepare payload for n8n (with URL instead of base64)
       const payload = {
         name,
         email,
@@ -48,11 +59,11 @@ export default function CTAButtons({
           costReductionPercentage: results.costReductionPercentage,
           tasks: selectedTasks,
         },
-        pdfBase64,
+        pdfUrl, // Send URL instead of base64!
         timestamp: new Date().toISOString(),
       };
-
-      // 3. Send to n8n webhook
+  
+      // 4. Send to n8n webhook
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -60,18 +71,18 @@ export default function CTAButtons({
         },
         body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         throw new Error('Webhook request failed');
       }
-
-      // 4. Show success message
+  
+      // 5. Show success message
       setIsModalOpen(false);
       setShowSuccess(true);
       
       // Hide success message after 5 seconds
       setTimeout(() => setShowSuccess(false), 5000);
-
+  
     } catch (error) {
       console.error('Error sending report:', error);
       throw error; // Re-throw to let modal handle it
