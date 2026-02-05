@@ -136,8 +136,12 @@ export default function TaskBreakdown({ taskResults }: TaskBreakdownProps) {
                           <p className="text-orange-400 text-xs font-inter-tight">
                             💡 <strong>Note:</strong> While Year 1 requires additional investment of {formatCurrency(Math.abs(task.savingsYear1))}, 
                             you'll still reclaim {formatNumber(task.workingDaysSaved, 0)} working days. 
-                            This time can be redirected to revenue-generating activities. 
-                            Year 2+ becomes profitable at {formatCurrency(task.savingsYear2Plus)}/year.
+                            This time can be redirected to revenue-generating activities.
+                            {task.savingsYear2Plus > 0 ? (
+                              <> Year 2+ becomes profitable at {formatCurrency(task.savingsYear2Plus)}/year.</>
+                            ) : (
+                              <> Year 2+ continues to require investment of {formatCurrency(Math.abs(task.savingsYear2Plus))}/year, but time savings remain valuable.</>
+                            )}
                           </p>
                         </div>
                       )}

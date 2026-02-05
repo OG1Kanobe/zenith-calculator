@@ -67,7 +67,7 @@ export default function TaskSelector({ selectedTasks, onChange }: TaskSelectorPr
   const updateVolume = (taskId: string, volume: number) => {
     onChange(
       selectedTasks.map(s => 
-        s.taskId === taskId ? { ...s, volume: Math.max(1, volume) } : s
+        s.taskId === taskId ? { ...s, volume: volume } : s
       )
     );
   };
@@ -133,28 +133,30 @@ export default function TaskSelector({ selectedTasks, onChange }: TaskSelectorPr
                             </label>
                             <div className="flex items-center gap-3">
                             <input
-  type="number"
-  value={volume === 0 ? '' : volume}
+  type="text"
+  inputMode="numeric"
+  value={volume || ''}
   onChange={(e) => {
     const val = e.target.value;
-    if (val === '' || val === '0') {
-      // Allow empty/zero while typing
+    
+    // Allow completely empty
+    if (val === '') {
       updateVolume(task.id, 0);
-    } else {
-      const numVal = parseInt(val);
-      if (!isNaN(numVal)) {
-        updateVolume(task.id, numVal);
-      }
+      return;
+    }
+    
+    // Parse and update
+    const numVal = parseInt(val.replace(/\D/g, ''), 10);
+    if (!isNaN(numVal)) {
+      updateVolume(task.id, numVal);
     }
   }}
-  onBlur={(e) => {
-    // When they click away, ensure minimum of 1
-    const val = parseInt(e.target.value);
-    if (!val || val < 1) {
-      updateVolume(task.id, task.suggestedVolume || 1);
+  onBlur={() => {
+    // When leaving field, set to suggested if empty/zero
+    if (!volume || volume === 0) {
+      updateVolume(task.id, task.suggestedVolume);
     }
   }}
-  min="1"
   placeholder={task.suggestedVolume.toString()}
   className="w-32 px-3 py-2 bg-[#010112] border border-[#5ccfa2] rounded 
            text-[#f5f5f5] font-inter-tight

@@ -38,7 +38,15 @@ export default function ComparisonChart({ results }: ComparisonChartProps) {
         
         {/* AI Solution Bar */}
         <div>
-        <div className="w-full h-10 md:h-12 bg-gray-800 rounded-lg relative overflow-hidden">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-inter-tight text-[#f5f5f5] text-sm">
+              Zenith AI Solution
+            </span>
+            <span className="font-mono text-[#5ccfa2] font-semibold">
+              {formatCurrency(aiCost)}
+            </span>
+          </div>
+          <div className="w-full h-10 md:h-12 bg-gray-800 rounded-lg relative overflow-hidden">
             <div 
                 className="h-full bg-[#5ccfa2] rounded-lg flex items-center justify-end px-2 md:px-4 transition-all duration-1000"
                 style={{ width: `${percentage}%` }}
@@ -47,7 +55,7 @@ export default function ComparisonChart({ results }: ComparisonChartProps) {
                 {percentage}%
                 </span>
             </div>
-            </div>
+          </div>
         </div>
       </div>
       

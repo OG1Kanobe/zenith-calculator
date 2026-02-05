@@ -43,13 +43,17 @@ export default function CTAButtons({ onSendReport, onCustomAudit }: CTAButtonsPr
       </div>
       
       {/* Disclaimer */}
-      <div className="mt-6">
-        <p className="text-[#a0a0a0] text-xs font-inter-tight text-center">
-          * Zenith pricing includes setup, monthly optimization, and estimated AI usage costs based on 
-          current API rates and your specified volume. Actual AI costs may vary slightly based on usage complexity. 
-          No hidden fees.
-        </p>
-      </div>
+<div className="mt-6">
+  <p className="text-[#a0a0a0] text-xs font-inter-tight text-center">
+    * Zenith pricing includes setup, monthly optimization, and estimated AI usage costs based on 
+    current API rates and your specified volume. Actual AI costs may vary slightly based on usage complexity. 
+    No hidden fees.
+    <br /><br />
+    ** All time savings, cost reductions, and ROI projections are estimates based on your inputs and 
+    industry-standard benchmarks. Actual results may vary depending on implementation, workflow complexity, 
+    and usage patterns.
+  </p>
+</div>
     </div>
   );
 }
