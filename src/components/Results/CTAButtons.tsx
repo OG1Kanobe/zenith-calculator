@@ -45,9 +45,11 @@ export default function CTAButtons({
             taskName: task.taskName,
             volume: task.volume,
             savingsYear1: task.savingsYear1,
+            savingsYear2Plus: task.savingsYear2Plus, // ADD THIS
             annualHoursSaved: task.annualHoursSaved,
             annualManualCost: task.annualManualCost,
             zenithYear1Cost: task.zenithYear1Cost,
+            zenithYear2PlusCost: task.zenithYear2PlusCost, // ADD THIS - CRITICAL!
           })),
         },
         timestamp: new Date().toISOString(),

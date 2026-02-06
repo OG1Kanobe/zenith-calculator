@@ -62,39 +62,48 @@ export default function OptimizationOpportunity({
 
   return (
     <div className="space-y-8">
-      {/* New Alert Banner */}
-      <OptimizationAlert 
-        threeYearTotal={threeYearTotal}
-        severity={severity}
-      />
-
-      {/* New One-Off Package Card */}
-      <OneOffPackageCard 
-        onBookConsultation={onCustomStrategy}
-      />
-
-      {/* New Collapsible Full-Service */}
-      <FullServiceCollapsible 
-        results={results}
-        onBookConsultation={onCustomStrategy}
-      />
-
-      {/* Divider */}
-      <div className="border-t-2 border-gray-700"></div>
-
-      {/* Keep Your Existing Optimization Suggestions Section */}
+      {/* ONLY show one-off package recommendation if 3-year total is negative */}
+      {threeYearTotal < 0 && (
+        <>
+          {/* New Alert Banner */}
+          <OptimizationAlert 
+            threeYearTotal={threeYearTotal}
+            severity={severity}
+          />
+  
+          {/* New One-Off Package Card */}
+          <OneOffPackageCard 
+            onBookConsultation={onCustomStrategy}
+          />
+  
+          {/* New Collapsible Full-Service */}
+          <FullServiceCollapsible 
+            results={results}
+            onBookConsultation={onCustomStrategy}
+          />
+  
+          {/* Divider */}
+          <div className="border-t-2 border-gray-700"></div>
+        </>
+      )}
+  
+      {/* Keep Your Existing Optimization Suggestions Section - ALWAYS SHOW */}
       <div className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-500 rounded-xl p-4 md:p-8">
         <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
           <span className="text-2xl md:text-4xl">⚡</span>
           <div>
             <h2 className="font-mono text-blue-400 text-lg md:text-2xl mb-1 md:mb-2">
-              INSTANT ROI ALTERNATIVES
+              {threeYearTotal < 0 ? 'INSTANT ROI ALTERNATIVES' : 'OPTIMIZATION OPPORTUNITIES'}
             </h2>
             <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
-              Or optimize your current selection for better ROI
+              {threeYearTotal < 0 
+                ? 'Or optimize your current selection for better ROI'
+                : 'Ways to maximize your ROI even further'
+              }
             </p>
           </div>
         </div>
+        
         
         {/* Current Selection Summary */}
         <div className="bg-[#010112]/50 border border-blue-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
