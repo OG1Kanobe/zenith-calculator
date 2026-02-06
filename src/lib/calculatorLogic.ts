@@ -91,6 +91,8 @@ export function calculateTaskResult(
   
   // Generate AI cost disclaimer
   const aiCostDisclaimer = generateAICostDisclaimer(task, selection.volume);
+
+  
   
   return {
     taskId: task.id,
@@ -105,7 +107,10 @@ export function calculateTaskResult(
     annualHoursSaved,
     workingDaysSaved,
     breakevenMonth,
-    aiCostDisclaimer
+    aiCostDisclaimer,
+    zenithSetupFee: task.zenithSetupFee,
+  zenithMonthlyFee: task.zenithMonthlyFee,
+  aiRunCost: annualVolume * task.aiRunCost, // Total annual AI cost
   };
 }
 

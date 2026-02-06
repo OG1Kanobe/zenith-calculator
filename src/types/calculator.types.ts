@@ -48,6 +48,11 @@ export interface CalculationResult {
   workingDaysSaved: number;
   breakevenMonth: number;
   aiCostDisclaimer: string;
+
+  // ADD THESE THREE:
+  zenithSetupFee: number;
+  zenithMonthlyFee: number;
+  aiRunCost: number;
 }
 
 export interface TotalResults {

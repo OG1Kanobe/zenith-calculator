@@ -45,11 +45,15 @@ export default function CTAButtons({
             taskName: task.taskName,
             volume: task.volume,
             savingsYear1: task.savingsYear1,
-            savingsYear2Plus: task.savingsYear2Plus, // ADD THIS
+            savingsYear2Plus: task.savingsYear2Plus,
             annualHoursSaved: task.annualHoursSaved,
             annualManualCost: task.annualManualCost,
             zenithYear1Cost: task.zenithYear1Cost,
-            zenithYear2PlusCost: task.zenithYear2PlusCost, // ADD THIS - CRITICAL!
+            zenithYear2PlusCost: task.zenithYear2PlusCost,
+            // ADD THESE THREE:
+            zenithSetupFee: task.zenithSetupFee,          // NEW
+            zenithMonthlyFee: task.zenithMonthlyFee,      // NEW
+            aiRunCost: task.aiRunCost, // NEW - total annual AI cost
           })),
         },
         timestamp: new Date().toISOString(),
