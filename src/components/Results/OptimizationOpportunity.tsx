@@ -71,12 +71,24 @@ export default function OptimizationOpportunity({
 
   return (
     <div className="space-y-8">
-      {/* 1. YOUR CURRENT SELECTION (GREEN BORDER) - ALWAYS FIRST */}
-      <div className="bg-gradient-to-br from-green-900/20 to-green-800/10 border-2 border-green-500 rounded-xl p-4 md:p-8">
+      {/* 1. YOUR CURRENT SELECTION - ALWAYS FIRST */}
+      <div className={`bg-gradient-to-br rounded-xl p-4 md:p-8 border-2 ${
+  threeYearTotal > 0 
+    ? 'from-green-900/20 to-green-800/10 border-green-500'  // All positive
+    : threeYearTotal > -15000 
+      ? 'from-orange-900/20 to-orange-800/10 border-orange-500'  // Moderate negative
+      : 'from-red-900/20 to-red-800/10 border-red-500'  // Strongly negative
+}`}>
         <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
           <span className="text-2xl md:text-4xl">📊</span>
           <div>
-            <h2 className="font-mono text-green-400 text-lg md:text-2xl mb-1 md:mb-2">
+          <h2 className={`font-mono text-lg md:text-2xl mb-1 md:mb-2 ${
+  threeYearTotal > 0 
+    ? 'text-green-400'
+    : threeYearTotal > -15000 
+      ? 'text-orange-400'
+      : 'text-red-400'
+}`}>
               YOUR CURRENT SELECTION
             </h2>
             <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
