@@ -37,15 +37,6 @@ interface OptimizationOpportunityProps {
   onCustomStrategy: () => void;
 }
 
-interface Suggestion {
-  title: string;
-  description: string;
-  projectedYear1Savings: number;
-  savingsIncrease?: number;
-  buttonText: string;
-  newSelections: TaskSelection[];
-}
-
 export default function OptimizationOpportunity({ 
   results, 
   selectedTasks,
@@ -71,25 +62,54 @@ export default function OptimizationOpportunity({
 
   return (
     <div className="space-y-8">
-      {/* 1. YOUR CURRENT SELECTION (GREEN BORDER) - ALWAYS FIRST */}
-      <div className="bg-gradient-to-br from-green-900/20 to-green-800/10 border-2 border-green-500 rounded-xl p-4 md:p-8">
+      {/* ONLY show one-off package recommendation if 3-year total is negative */}
+      {threeYearTotal < 0 && (
+        <>
+          {/* New Alert Banner */}
+          <OptimizationAlert 
+            threeYearTotal={threeYearTotal}
+            severity={severity}
+          />
+  
+          {/* New One-Off Package Card */}
+          <OneOffPackageCard 
+            onBookConsultation={onCustomStrategy}
+          />
+  
+          {/* New Collapsible Full-Service */}
+          <FullServiceCollapsible 
+            results={results}
+            onBookConsultation={onCustomStrategy}
+          />
+  
+          {/* Divider */}
+          <div className="border-t-2 border-gray-700"></div>
+        </>
+      )}
+  
+      {/* Keep Your Existing Optimization Suggestions Section - ALWAYS SHOW */}
+      <div className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-500 rounded-xl p-4 md:p-8">
         <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
-          <span className="text-2xl md:text-4xl">📊</span>
+          <span className="text-2xl md:text-4xl">⚡</span>
           <div>
-            <h2 className="font-mono text-green-400 text-lg md:text-2xl mb-1 md:mb-2">
-              YOUR CURRENT SELECTION
+            <h2 className="font-mono text-blue-400 text-lg md:text-2xl mb-1 md:mb-2">
+              {threeYearTotal < 0 ? 'INSTANT ROI ALTERNATIVES' : 'OPTIMIZATION OPPORTUNITIES'}
             </h2>
             <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
-              Results based on your choices
+              {threeYearTotal < 0 
+                ? 'Or optimize your current selection for better ROI'
+                : 'Ways to maximize your ROI even further'
+              }
             </p>
           </div>
         </div>
         
+        
         {/* Current Selection Summary */}
-        <div className="bg-[#010112]/50 border border-green-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+        <div className="bg-[#010112]/50 border border-blue-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-mono text-[#5ccfa2] text-sm uppercase tracking-wider">
-              Selected Tasks:
+              Your Current Selection:
             </h3>
             
             <button
@@ -243,89 +263,50 @@ export default function OptimizationOpportunity({
             Selected: {results.taskResults.map(t => t.taskName).join(', ')}
           </p>
         </div>
-      </div>
-
-      {/* 2. INSTANT ROI ALTERNATIVES (SUGGESTIONS) - IF ANY */}
-      {suggestions.length > 0 && (
-        <div className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-500 rounded-xl p-4 md:p-8">
-          <div className="flex items-start gap-2 md:gap-3 mb-4 md:mb-6">
-            <span className="text-2xl md:text-4xl">⚡</span>
-            <div>
-              <h2 className="font-mono text-blue-400 text-lg md:text-2xl mb-1 md:mb-2">
-                INSTANT ROI ALTERNATIVES
-              </h2>
-              <p className="text-[#f5f5f5] font-inter-tight text-sm md:text-base">
-                Optimize your selection for better ROI
-              </p>
-            </div>
-          </div>
-          
-          {/* Optimization Options */}
-          <div className="space-y-4">
-            {suggestions.map((suggestion: Suggestion, index: number) => (
-              <div 
-                key={index}
-                className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6 hover:border-[#5ccfa2] transition-colors"
-              >
-                <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
-                  <div className="flex-1">
-                    <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
-                      {suggestion.title}
-                    </h4>
-                    <p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
-                      {suggestion.description}
-                    </p>
-                        
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
-                      <div>
-                        <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
-                        <p className="text-[#5ccfa2] font-mono font-bold text-xl md:text-2xl">
-                          +{formatCurrency(suggestion.projectedYear1Savings)}
-                        </p>
-                      </div>
-                      {suggestion.savingsIncrease && (
-                        <div className="text-[#5ccfa2] font-inter-tight text-xs md:text-sm">
-                          ↑ {formatCurrency(suggestion.savingsIncrease)} improvement
-                        </div>
-                      )}
+        
+        {/* Optimization Options */}
+        <div className="space-y-4">
+          {suggestions.map((suggestion, index) => (
+            <div 
+              key={index}
+              className="bg-[#010112]/50 border border-gray-700 rounded-lg p-4 md:p-6 hover:border-[#5ccfa2] transition-colors"
+            >
+              <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-4">
+                <div className="flex-1">
+                  <h4 className="font-inter-tight text-[#f5f5f5] font-semibold text-base md:text-lg mb-2">
+                    {suggestion.title}
+                  </h4>
+                  <p className="text-[#a0a0a0] font-inter-tight text-xs md:text-sm mb-3">
+                    {suggestion.description}
+                  </p>
+                      
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+                    <div>
+                      <p className="text-[#a0a0a0] text-xs font-inter-tight">Year 1 Savings</p>
+                      <p className="text-[#5ccfa2] font-mono font-bold text-xl md:text-2xl">
+                        +{formatCurrency(suggestion.projectedYear1Savings)}
+                      </p>
                     </div>
+                    {suggestion.savingsIncrease && (
+                      <div className="text-[#5ccfa2] font-inter-tight text-xs md:text-sm">
+                        ↑ {formatCurrency(suggestion.savingsIncrease)} improvement
+                      </div>
+                    )}
                   </div>
-                  
-                  <button
-                    onClick={() => onRecalculate(suggestion.newSelections)}
-                    className="w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
-                             hover:bg-[#6ee0b3] transition-colors"
-                  >
-                    {suggestion.buttonText}
-                  </button>
                 </div>
+                
+                <button
+                  onClick={() => onRecalculate(suggestion.newSelections)}
+                  className="w-full md:w-auto px-6 py-3 bg-[#5ccfa2] text-[#010112] rounded-lg font-mono font-semibold text-sm md:text-base
+                           hover:bg-[#6ee0b3] transition-colors"
+                >
+                  {suggestion.buttonText}
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      )}
-
-      {/* 3. ALERT (IF NEGATIVE 3-YEAR TOTAL) */}
-      {threeYearTotal < 0 && (
-        <OptimizationAlert 
-          threeYearTotal={threeYearTotal}
-          severity={severity}
-        />
-      )}
-
-      {/* 4. ONE-OFF PACKAGE (IF NEGATIVE 3-YEAR TOTAL) */}
-      {threeYearTotal < 0 && (
-        <>
-          <OneOffPackageCard 
-            onBookConsultation={onCustomStrategy}
-          />
-
-          <FullServiceCollapsible 
-            results={results}
-            onBookConsultation={onCustomStrategy}
-          />
-        </>
-      )}
+      </div>
     </div>
   );
 }
@@ -346,9 +327,16 @@ function getVolumeContext(taskId: string): string {
 function generateSuggestions(
   currentSelections: TaskSelection[], 
   industry: Industry
-): Suggestion[] {
+): Array<{
+  title: string;
+  description: string;
+  projectedYear1Savings: number;
+  savingsIncrease?: number;
+  buttonText: string;
+  newSelections: TaskSelection[];
+}> {
 
-  const suggestions: Suggestion[] = [];
+  const suggestions = [];
   
   const calculateSavings = (selections: TaskSelection[]) => {
     const manualCost = selections.reduce((total, sel) => {
@@ -381,7 +369,6 @@ function generateSuggestions(
   };
   
   const currentYear1Savings = calculateSavings(currentSelections);
-  
   // Suggestion 1: Scale volume (ONLY for growth tasks)
   if (currentSelections.length === 1) {
     const taskId = currentSelections[0].taskId;

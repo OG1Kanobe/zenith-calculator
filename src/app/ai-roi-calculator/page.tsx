@@ -61,9 +61,6 @@ export default function AIROICalculator() {
       );
     }
 
-    // Calculate 3-year total for determining layout
-    const threeYearTotal = results.totalSavingsYear1 + (results.totalSavingsYear2Plus * 2);
-
     return (
       <div className="min-h-screen bg-[#010112] text-[#f5f5f5]">
         {/* Header */}
@@ -93,18 +90,12 @@ export default function AIROICalculator() {
           </div>
         </header>
 
-        {/* Results Content - NEW ORDER */}
+        {/* Results Content - KEEP ORIGINAL BRANCHING LOGIC */}
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div id="results-content">
-            {/* 1. ALWAYS SHOW RESULTS FIRST */}
-            <ResultsSummary results={results} />
-            <ComparisonChart results={results} />
-            <BreakevenTimeline results={results} />
-            <TaskBreakdown taskResults={results.taskResults} />
-
-            {/* 2. IF NEGATIVE 3-YEAR TOTAL: Show Alert + Optimization + One-Off */}
-            {threeYearTotal < 0 && (
-              <div className="mt-12">
+          {results.totalSavingsYear1 < 0 ? (
+            /* Negative Year 1: Show optimization path with NEW REORDERED LAYOUT */
+            <>
+              <div id="results-content">
                 <OptimizationOpportunity
                   results={results}
                   selectedTasks={selectedTasks}
@@ -116,25 +107,50 @@ export default function AIROICalculator() {
                   onCustomStrategy={handleCustomAudit}
                 />
               </div>
-            )}
-          </div>
-          
-          {/* Hidden PDF View */}
-          <PDFResultsView 
-            results={results}
-            selectedTasks={selectedTasks}
-            industry={industry}
-          />
-          
-          {/* CTA Buttons */}
-          <CTAButtons
-            targetElementId="pdf-results-content"
-            results={results}
-            selectedTasks={selectedTasks}
-            industry={industry}
-            webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
-            onCustomAudit={handleCustomAudit}
-          />
+              
+              {/* Hidden PDF View */}
+              <PDFResultsView 
+                results={results}
+                selectedTasks={selectedTasks}
+                industry={industry}
+              />
+              
+              <CTAButtons
+                targetElementId="pdf-results-content"
+                results={results}
+                selectedTasks={selectedTasks}
+                industry={industry}
+                webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+                onCustomAudit={handleCustomAudit}
+              />
+            </>
+          ) : (
+            /* Positive Year 1: Show normal results (UNCHANGED) */
+            <>
+              <div id="results-content">
+                <ResultsSummary results={results} />
+                <ComparisonChart results={results} />
+                <BreakevenTimeline results={results} />
+                <TaskBreakdown taskResults={results.taskResults} />
+              </div>
+              
+              {/* Hidden PDF View */}
+              <PDFResultsView 
+                results={results}
+                selectedTasks={selectedTasks}
+                industry={industry}
+              />
+              
+              <CTAButtons
+                targetElementId="pdf-results-content"
+                results={results}
+                selectedTasks={selectedTasks}
+                industry={industry}
+                webhookUrl={process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''}
+                onCustomAudit={handleCustomAudit}
+              />
+            </>
+          )}
         </main>
       </div>
     );
