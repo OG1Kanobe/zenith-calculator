@@ -14,8 +14,11 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-  title: 'Zenith AI - Calculate Your Automation Savings',
-  description: 'Discover how much money and time you can save by automating your manual tasks with Zenith AI.',
+  title: 'Zenith Digital - Calculate Your Automation Savings',
+  description: 'Discover how much money and time you can save by automating your manual tasks with Zenith Digital.',
+  icons: {
+    icon: 'https://res.cloudinary.com/dj31nzvfa/image/upload/v1770326757/ZD_LogoMark_r3cb9n.png',
+  },
 };
 
 export default function RootLayout({
